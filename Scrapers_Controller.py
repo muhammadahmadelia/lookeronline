@@ -182,8 +182,6 @@ class Controller:
 
     # send email
     def send_mail(self, send_from, from_pass, send_to, subject, text, files=None):
-        assert isinstance(send_to, list)
-
         msg = MIMEMultipart()
         msg['From'] = send_from
         msg['To'] = send_to
