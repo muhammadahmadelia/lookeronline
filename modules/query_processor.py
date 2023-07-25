@@ -8,6 +8,8 @@ from models.variant import Variant
 from modules.files_reader import Files_Reader
 import pymongo
 from urllib.parse import quote_plus
+import certifi
+ca = certifi.where()
 
 class Query_Processor:
     def __init__(self, DEBUG: bool, config_file: str, database_name: str):
@@ -32,7 +34,7 @@ class Query_Processor:
                 while True:
                     try:
                         # Replace <connection-string> with your actual connection string
-                        self.db_client = pymongo.MongoClient(URI)
+                        self.db_client = pymongo.MongoClient(URI, tlsCAFile=ca)
                         self.db_client.lookeronline.command('ping')
                         break
                     except Exception as e: pass

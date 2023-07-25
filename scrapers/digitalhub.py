@@ -53,8 +53,9 @@ class Digitalhub_Scraper:
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument("--start-maximized")
         self.chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        self.args = ["hide_console", ]
-        self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
+        # self.args = ["hide_console", ]
+        # self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
+        self.browser = webdriver.Chrome(options=self.chrome_options)
         pass
 
     def controller(self, store: Store) -> None:
@@ -72,7 +73,8 @@ class Digitalhub_Scraper:
 
                     for brand in store.brands:
                         # brand: Brand = brand_with_type['brand']
-                        print(f'Brand: {brand.name}')
+                        # print(f'Brand: {brand.name}')
+                        self.print_logs(f'Brand: {brand.name}')
 
                         for glasses_type in brand.product_types:
 
@@ -85,8 +87,11 @@ class Digitalhub_Scraper:
                                 total_products = self.get_total_products()
                                 scraped_products = 0
                                 
-                                print(f'Type: {glasses_type} | Total products: {total_products}')
-                                print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                                # print(f'Type: {glasses_type} | Total products: {total_products}')
+                                # print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+
+                                self.print_logs(f'Type: {glasses_type} | Total products: {total_products}')
+                                self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
 
                                 self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
                                 while True:
@@ -116,8 +121,11 @@ class Digitalhub_Scraper:
                             self.save_to_json(self.data)
                             end_time = datetime.now()
                             
-                            print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-                            print('Duration: {}\n'.format(end_time - start_time))
+                            # print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                            # print('Duration: {}\n'.format(end_time - start_time))
+
+                            self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                            self.print_logs('Duration: {}\n'.format(end_time - start_time))
                             
                             self.close_last_tab()
 

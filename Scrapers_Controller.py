@@ -7,6 +7,15 @@ from datetime import datetime
 import chromedriver_autoinstaller
 import pandas as pd
 
+import smtplib
+from email.message import EmailMessage
+import ssl
+from os.path import basename
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+
 from models.store import Store
 from models.brand import Brand
 from models.product import Product
@@ -14,6 +23,7 @@ from models.variant import Variant
 from models.metafields import Metafields
 
 from modules.query_processor import Query_Processor
+from modules.files_reader import Files_Reader
 
 
 from scrapers.digitalhub import Digitalhub_Scraper
@@ -42,6 +52,7 @@ class Controller:
     
     def main_controller(self) -> None:
         try:
+            log_files = list()
             # getting all stores from database
             query_processor = Query_Processor(self.DEBUG, self.config_file, '')
             stores = query_processor.get_stores()
@@ -69,6 +80,7 @@ class Controller:
                     self.create_result_filename()
 
                     print('\n')
+                    if self.logs_filename not in log_files: log_files.append(self.logs_filename)
 
                     if self.store.name in ['Digitalhub', 'Safilo', 'Keringeyewear', 'Luxottica']:
                         # download chromedriver.exe with same version and get its path
@@ -85,8 +97,16 @@ class Controller:
                     elif self.store.name == 'Keringeyewear': Keringeyewear_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                     elif self.store.name == 'Rudyproject': Rudyproject_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                     elif self.store.name == 'Luxottica': Luxottica_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                else: print('No brand selected to scrape and update') 
 
+                    
+                else: print('No brand selected to scrape and update')
+            if log_files:
+                file_reader = Files_Reader(self.DEBUG)
+                json_data = file_reader.read_json_file(self.config_file)
+                start_time = datetime.now()
+                subject = f'Scraper time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}'
+                files = [logs_file for logs_file in log_files]
+                self.send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], json_data[0]['email']['to'], subject, '', files)
         except Exception as e:
             if self.DEBUG: print(f'Exception in multiple_stores_controller: {e}')
             self.print_logs(f'Exception in multiple_stores_controller: {e}')
@@ -160,6 +180,35 @@ class Controller:
                 f.write(f'\n{log}')
         except: pass
 
+    # send email
+    def send_mail(self, send_from, from_pass, send_to, subject, text, files=None):
+        assert isinstance(send_to, list)
+
+        msg = MIMEMultipart()
+        msg['From'] = send_from
+        msg['To'] = send_to
+        msg['Date'] = formatdate(localtime=True)
+        msg['Subject'] = subject
+
+        msg.attach(MIMEText(text))
+
+        for f in files or []:
+            with open(f, "rb") as fil:
+                part = MIMEApplication(
+                    fil.read(),
+                    Name=basename(f)
+                )
+            # After the file is closed
+            part['Content-Disposition'] = 'attachment; filename="%s"' % basename(f)
+            msg.attach(part)
+
+
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+            smtp.login(send_from, from_pass)
+            smtp.sendmail(send_from, send_to, msg.as_string())
+
 DEBUG = True
 try:
     pathofpyfolder = os.path.realpath(sys.argv[0])
@@ -168,6 +217,7 @@ try:
     
     if '.exe' in pathofpyfolder.split('\\')[-1]: DEBUG = False
     Controller(DEBUG, path).main_controller()
+    
 except Exception as e:
     if DEBUG: print('Exception: '+str(e))
     else: pass

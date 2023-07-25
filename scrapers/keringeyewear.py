@@ -53,8 +53,9 @@ class Keringeyewear_Scraper:
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument("--start-maximized")
         self.chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        self.args = ["hide_console", ]
-        self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
+        # self.args = ["hide_console", ]
+        # self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
+        self.browser = webdriver.Chrome(options=self.chrome_options)
         pass
 
     def controller(self, store: Store) -> None:
