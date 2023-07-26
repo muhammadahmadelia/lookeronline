@@ -70,7 +70,8 @@ class Luxottica_Scraper:
                 for brand in store.brands:
                     
                     brand_url: str = self.get_brand_url(brand, query_processor)
-                    print(f'Brand: {brand.name}')
+                    # print(f'Brand: {brand.name}')
+                    self.print_logs(f'Brand: {brand.name}')
 
                     if brand_url:
                         for glasses_type in brand.product_types:
@@ -85,13 +86,15 @@ class Luxottica_Scraper:
                                 category_url = str(self.browser.current_url).strip()
                                 total_products = self.get_total_products_for_brand()
 
-                                print(f'Total products found: {total_products} | Type: {glasses_type}')
+                                # print(f'Total products found: {total_products} | Type: {glasses_type}')
+                                self.print_logs(f'Total products found: {total_products} | Type: {glasses_type}')
 
                                 if int(total_products) > 0:
                                     page_number = 1
                                     scraped_products = 0
                                     start_time = datetime.now()
-                                    print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                                    # print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                                    self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
 
                                     self.printProgressBar(0, int(total_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
 
@@ -139,8 +142,10 @@ class Luxottica_Scraper:
 
                                     end_time = datetime.now()
 
-                                    print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-                                    print('Duration: {}\n'.format(end_time - start_time))
+                                    # print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                                    # print('Duration: {}\n'.format(end_time - start_time))
+                                    self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                                    self.print_logs('Duration: {}\n'.format(end_time - start_time))
                             else: print(f'Cannot find {glasses_type} for {brand.name}')
 
             else: print(f'Failed to login \nURL: {store.link}\nUsername: {str(store.username)}\nPassword: {str(store.password)}')

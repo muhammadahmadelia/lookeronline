@@ -237,3 +237,82 @@ class Query_Processor:
             with open(self.logs_filename, 'a') as f:
                 f.write(f'\n{log}')
         except: pass
+
+
+    def get_complete_products_by_brand(self, brand_name: str) -> list[Product]:
+        products: list[Product] = []
+        try:
+            if not self.db_client: self.get_db_client()
+            db = self.db_client[self.database_name]
+            json_products = list(db.products.aggregate( [ { "$lookup": { "from": "variants", "localField": "_id", "foreignField": "product_id", "as": "variants" } }, { "$match": { "brand": brand_name } } ] ))
+            products = self.get_products_in_model(json_products)
+        except Exception as e:
+            if self.DEBUG: print(f'Exception in get_complete_products_by_brand: {e}')
+            else: pass
+        finally: return products
+
+    def get_complete_products_by_brand_and_type(self, brand_name: str, product_type: str) -> list[Product]:
+        products: list[dict] = []
+        try:
+            if not self.db_client: self.get_db_client()
+            db = self.db_client[self.database_name]
+            json_products = list( db.products.aggregate( [ { "$lookup": { "from": "variants", "localField": "_id", "foreignField": "product_id", "as": "variants" } }, { "$match": { "brand": brand_name, "type": product_type } } ] ) )
+            products = self.get_products_in_model(json_products)
+        except Exception as e:
+            if self.DEBUG: print(f'Exception in get_complete_products_by_brand_and_type: {e}')
+            else: pass
+        finally: return products
+
+    def get_products_in_model(self, json_products: list[dict]) -> list[Product]:
+        products: list[Product] = []
+        try:
+            for p_json in list(json_products):
+                product = Product()
+                product.id = str(p_json['_id']).strip()
+                product.number = str(p_json['number']).strip()
+                product.name = str(p_json['name']).strip()
+                product.brand = str(p_json['brand']).strip()
+                product.frame_code = str(p_json['frame_code']).strip()
+                product.lens_code = str(p_json['lens_code']).strip()
+                product.type = str(p_json['type']).strip()
+                product.bridge = str(p_json['bridge']).strip()
+                product.template = str(p_json['template']).strip()
+                product.shopify_id = str(p_json['shopify_id']).strip()
+                product.metafields.for_who = str(p_json['metafields']['for_who']).strip()
+                product.metafields.lens_material = str(p_json['metafields']['lens_material']).strip()
+                product.metafields.lens_technology = str(p_json['metafields']['lens_technology']).strip()
+                product.metafields.lens_color = str(p_json['metafields']['lens_color']).strip()
+                product.metafields.frame_shape = str(p_json['metafields']['frame_shape']).strip()
+                product.metafields.frame_material = str(p_json['metafields']['frame_material']).strip()
+                product.metafields.frame_color = str(p_json['metafields']['frame_color']).strip()
+                product.metafields.size_bridge_template = str(p_json['metafields']['size-bridge-template']).strip()
+                product.metafields.gtin1 = str(p_json['metafields']['gtin1']).strip()
+                product.image = str(p_json['image']).strip() if product.image else ''
+                product.images_360 = p_json['images_360'] if p_json['images_360'] else []
+
+                variants: list[variants] = []
+                # for v_json in query_processor.get_variants_by_product_id(product.id):
+                for v_json in p_json['variants']:
+                    variant = Variant()
+                    variant.id = str(v_json['_id']).strip()
+                    variant.product_id = str(v_json['product_id']).strip()
+                    variant.title = str(v_json['title']).strip() if 'title' in v_json else ''
+                    variant.sku = str(v_json['sku']).strip()
+                    variant.inventory_quantity = int(v_json['inventory_quantity'])
+                    variant.found_status = int(v_json['found_status'])
+                    variant.wholesale_price = float(v_json['wholesale_price'])
+                    variant.listing_price = float(v_json['listing_price'])
+                    variant.barcode_or_gtin = str(v_json['barcode_or_gtin']).strip()
+                    variant.shopify_id = str(v_json['shopify_id']).strip()
+                    variant.inventory_item_id = str(v_json['inventory_item_id']).strip()
+                    variants.append(variant)
+
+                product.variants = variants
+
+                products.append(product)
+        except Exception as e:
+            if self.DEBUG: print(f'Exception in get_products_in_model: {e}')
+            else: pass
+        finally: return products
+    
+    
