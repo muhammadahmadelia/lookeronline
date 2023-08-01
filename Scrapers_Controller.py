@@ -378,6 +378,10 @@ try:
             json_data = file_reader.read_json_file(obj.config_file)
             start_time = datetime.now()
             subject = f'Scraper time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}'
+            # sending log files
+            try: send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], json_data[0]['email']['logs_to'], subject, '', log_files)
+            except Exception as e: print(str(e))
+            # sending result files
             files = [result_file for result_file in result_files]
             for results_to in json_data[0]['email']['results_to']:
                 send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], results_to, subject, '', files)
