@@ -21,13 +21,13 @@ class Keringeyewear_Mongodb:
 
     def controller(self, store: Store) -> None:
         try:
-            # print('Updating database...')
+            print('Updating database...')
             self.print_logs('Updating database...')
 
             for brand in store.brands:
 
                 for product_type in brand.product_types:
-                    # print(f'Brand: {brand.name} | Type: {product_type}')
+                    print(f'Brand: {brand.name} | Type: {product_type}')
                     self.print_logs(f'Brand: {brand.name} | Type: {product_type}')
 
                     # read products of specifc brand and specific type from json file
@@ -36,21 +36,21 @@ class Keringeyewear_Mongodb:
                     if len(scraped_products) > 0:
                         # get products of specifc brand and type from database
                         db_products = self.get_products(brand.name, product_type)
-                        # print(f'Scraped Products: {len(scraped_products)} | Database Products: {len(db_products)}')
+                        print(f'Scraped Products: {len(scraped_products)} | Database Products: {len(db_products)}')
                         self.print_logs(f'Scraped Products: {len(scraped_products)} | Database Products: {len(db_products)}')
 
                         start_time = datetime.now()
-                        # print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                        print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                         self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
 
                         # update all variants found status and inventory qunatity 0
                         products_ids = [db_product.id for db_product in db_products]
                         self.query_processor.update_variants({'product_id': {'$in': products_ids}}, {'$set': {'found_status': 0, 'inventory_quantity': 0}})
 
-                        self.printProgressBar(0, len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                        # self.printProgressBar(0, len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                         
                         for index, scraped_product in enumerate(scraped_products):
-                            self.printProgressBar((index + 1), len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                            # self.printProgressBar((index + 1), len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                             # matching scraped product with database products
                             # return type is integer if matched and None if not matched
                             matched_product_index = next((i for i, db_product in enumerate(db_products) if scraped_product.id == db_product.id), None)
@@ -79,9 +79,9 @@ class Keringeyewear_Mongodb:
                                 self.add_new_product(scraped_product)
                         
                         end_time = datetime.now()
-                        # print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-                        # print('Duration: {}\n'.format(end_time - start_time))
-                        # print()
+                        print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                        print('Duration: {}\n'.format(end_time - start_time))
+                        print()
                         self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                         self.print_logs('Duration: {}\n'.format(end_time - start_time))
                     else: self.print_logs(f'Failed to read values from {self.results_foldername} for {brand.name} | {product_type}')

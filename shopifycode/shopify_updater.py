@@ -31,28 +31,28 @@ class Shopify_Updater:
             shopify_processor = Shopify_Processor(self.DEBUG, self.config_file, self.logs_filename)
             shopify_processor.get_store_url()
             
-            # print(f'\nUpdating product inventory for {str(self.store.name).strip().title()}')
+            print(f'\nUpdating product inventory for {str(self.store.name).strip().title()}')
             self.print_logs(f'\nUpdating product inventory for {str(self.store.name).strip().title()}')
 
             for brand in self.store.brands:
                 template_suffix = ''
-                # print(f'\nBrand: {brand.name}')
+                print(f'\nBrand: {brand.name}')
                 self.print_logs(f'\nBrand: {brand.name}')
                 
                 brand.products = self.query_processor.get_complete_products_by_brand(brand.name)
-                # print(f'No. of Products in database: {len(brand.products)}')
+                print(f'No. of Products in database: {len(brand.products)}')
                 self.print_logs(f'No. of Products in database: {len(brand.products)}')
 
                 products_count = shopify_processor.get_count_of_products_by_vendor(brand.name)
-                # print(f'No. of Products in shopify: {products_count}')
+                print(f'No. of Products in shopify: {products_count}')
                 self.print_logs(f'No. of Products in shopify: {products_count}')
 
-                self.printProgressBar(0, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                # self.printProgressBar(0, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                 shopify_products = shopify_processor.get_products_by_vendor(brand.name)
 
                 if products_count == len(shopify_products):
                     for database_product_index, database_product in enumerate(brand.products):
-                        self.printProgressBar(database_product_index + 1, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                        # self.printProgressBar(database_product_index + 1, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                         
                         
                         if database_product.shopify_id:

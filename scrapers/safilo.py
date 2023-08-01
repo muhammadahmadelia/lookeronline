@@ -80,7 +80,7 @@ class Safilo_Scraper:
 
                 for brand in store.brands:
                     # brand: Brand = brand_with_type['brand']
-                    # print(f'Brand: {brand.name}')
+                    print(f'Brand: {brand.name}')
                     self.print_logs(f'Brand: {brand.name}')
 
                     for glasses_type in brand.product_types:
@@ -94,13 +94,13 @@ class Safilo_Scraper:
                             total_products = self.get_total_products()
                             scraped_products = 0
 
-                            # print(f'Type: {glasses_type} | Total products: {total_products}')
+                            print(f'Type: {glasses_type} | Total products: {total_products}')
                             self.print_logs(f'Type: {glasses_type} | Total products: {total_products}')
                             start_time = datetime.now()
-                            # print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                            print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                             self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
 
-                            self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
+                            # self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
                             brand_url = str(self.browser.current_url).strip()
 
                             for product_span in self.browser.find_elements(By.XPATH, '//div[@class="productListContent cc_results_list cc_grid_container"]/span[@class="cc_product_container productFlexItem"]'):
@@ -117,14 +117,14 @@ class Safilo_Scraper:
                                     self.wait_for_thread_list_to_complete()
                                     self.save_to_json(self.data)
                                 # self.save_to_json(self.data)
-                                self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
+                                # self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
                             
                             self.wait_for_thread_list_to_complete()
                             self.save_to_json(self.data)
 
                             end_time = datetime.now()
-                            # print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-                            # print('Duration: {}\n'.format(end_time - start_time))
+                            print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                            print('Duration: {}\n'.format(end_time - start_time))
                             self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                             self.print_logs('Duration: {}\n'.format(end_time - start_time))
                         

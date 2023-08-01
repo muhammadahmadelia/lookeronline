@@ -49,17 +49,17 @@ class Rudyproject_Scraper:
         try:
             for brand in store.brands:
                 # brand: Brand = brand_with_type['brand']
-                # print(f'Brand: {brand.name}')
+                print(f'Brand: {brand.name}')
                 self.print_logs(f'Brand: {brand.name}')
 
                 for glasses_type in brand.product_types:
-                    # print(f'Scraping Type: {glasses_type}')
+                    print(f'Scraping Type: {glasses_type}')
                     self.print_logs(f'Scraping Type: {glasses_type}')
 
                     scraped_products = 0
                     total_products = 0
                     start_time = datetime.now()
-                    # print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                    print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                     self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
 
                     for url in self.get_urls_for_type(glasses_type):
@@ -87,9 +87,9 @@ class Rudyproject_Scraper:
                         self.save_to_json(self.data)
                     
                     end_time = datetime.now()
-                    # print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-                    # print(f'Total products scraped: {scraped_products}')                    
-                    # print('Duration: {}\n'.format(end_time - start_time))
+                    print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                    print(f'Total products scraped: {scraped_products}')                    
+                    print('Duration: {}\n'.format(end_time - start_time))
 
                     self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                     self.print_logs(f'Total products scraped: {scraped_products}')                    

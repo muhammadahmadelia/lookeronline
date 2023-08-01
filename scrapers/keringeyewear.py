@@ -69,7 +69,7 @@ class Keringeyewear_Scraper:
             if self.login(store.username, store.password):
 
                 for brand in store.brands:
-                    # print(f'Brand: {brand.name}')
+                    print(f'Brand: {brand.name}')
                     self.print_logs(f'Brand: {brand.name}')
                     brand_url: str = ''
                     for glasses_type in brand.product_types:
@@ -94,18 +94,17 @@ class Keringeyewear_Scraper:
                             total_products = self.get_total_products()
                             scraped_products = 0
 
-                            # print(f'Type: {glasses_type} | Total products: {total_products}')
-                            # start_time = datetime.now()
-                            # print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                            print(f'Type: {glasses_type} | Total products: {total_products}')
+                            start_time = datetime.now()
+                            print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
 
                             self.print_logs(f'Type: {glasses_type} | Total products: {total_products}')
-                            start_time = datetime.now()
                             self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
 
                             products_data = self.get_products_on_first_page()
                             products_data = self.get_products_on_other_pages(products_data, glasses_type, total_products, brand_url_with_glasses_type)
 
-                            self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
+                            # self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
                             if not product_cookies: product_cookies = self.get_cookies_for_product()
                             headers = self.get_headers_for_product(product_cookies, brand_url_with_glasses_type)
 
@@ -119,15 +118,15 @@ class Keringeyewear_Scraper:
                                     self.wait_for_thread_list_to_complete()
                                     self.save_to_json(self.data)
 
-                                self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
+                                # self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
 
                             self.wait_for_thread_list_to_complete()
                             self.save_to_json(self.data)
                             self.close_last_tab()
                         else: print(f'Brand url not found fot {brand}')
                         end_time = datetime.now()
-                        # print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-                        # print('Duration: {}\n'.format(end_time - start_time))
+                        print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                        print('Duration: {}\n'.format(end_time - start_time))
 
                         self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                         self.print_logs('Duration: {}\n'.format(end_time - start_time))
