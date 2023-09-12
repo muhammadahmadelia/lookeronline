@@ -154,8 +154,9 @@ class Utils:
 
             if meta_title:
                 meta_title = str(meta_title).replace('  ', ' ').strip()
-                if len(f'{meta_title} | LookerOnline') > 60: meta_title = f'{meta_title} | LO'
-                else: meta_title = f'{meta_title} | LookerOnline'
+                if '| LookerOnline' not in meta_title: meta_title = '{} | LookerOnline'.format(meta_title)
+                # if len(f'{meta_title} | LookerOnline') > 60: meta_title = f'{meta_title} | LO'
+                # else: meta_title = f'{meta_title} | LookerOnline'
                 # if len(meta_title) > 60: meta_title = str(meta_title).replace('| LookerOnline', '| LO')
                 # else: meta_title = str(meta_title).replace('| LO', '| LookerOnline')
         except Exception as e:
