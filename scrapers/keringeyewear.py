@@ -19,6 +19,9 @@ from models.metafields import Metafields
 from models.variant import Variant
 from unidecode import unidecode
 
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
 class myScrapingThread(threading.Thread):
     def __init__(self, threadID: int, name: str, obj, brand: Brand, glasses_type: str, product_number: str, product_url: str, headers: dict) -> None:
         threading.Thread.__init__(self)
@@ -55,7 +58,8 @@ class Keringeyewear_Scraper:
         self.chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         # self.args = ["hide_console", ]
         # self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
-        self.browser = webdriver.Chrome(options=self.chrome_options)
+        # self.browser = webdriver.Chrome(options=self.chrome_options)
+        self.browser = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=self.chrome_options)
         pass
 
     def controller(self, store: Store) -> None:

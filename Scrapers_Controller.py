@@ -87,7 +87,7 @@ class Scraping_Controller:
 
                     if self.store.name in ['Digitalhub', 'Safilo', 'Keringeyewear', 'Luxottica']:
                         # download chromedriver.exe with same version and get its path
-                        chromedriver_autoinstaller.install(self.path)
+                        # chromedriver_autoinstaller.install(self.path)
                         if self.store.name == 'Digitalhub': Digitalhub_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
                         elif self.store.name == 'Safilo': Safilo_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
                         elif self.store.name == 'Keringeyewear': Keringeyewear_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
@@ -369,7 +369,7 @@ try:
     if '.exe' in pathofpyfolder.split('\\')[-1]: DEBUG = False
     obj = Scraping_Controller(DEBUG, path)
     log_files = obj.main_controller()
-    
+
     if log_files:
         obj = Shopify_Controller(DEBUG, path)
         result_files = obj.update_inventory_controller(log_files)

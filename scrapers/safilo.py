@@ -20,6 +20,9 @@ from models.product import Product
 from models.metafields import Metafields
 from models.variant import Variant
 
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -60,7 +63,8 @@ class Safilo_Scraper:
         self.chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
         # self.args = ["hide_console", ]
         # self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
-        self.browser = webdriver.Chrome(options=self.chrome_options)
+        # self.browser = webdriver.Chrome(options=self.chrome_options)
+        self.browser = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=self.chrome_options)
         pass
 
     def controller(self, store: Store) -> None:
