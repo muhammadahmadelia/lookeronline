@@ -753,6 +753,7 @@ class Luxottica_Scraper:
                             try:
                                 # if int(float(json_res['availableQuantity'])) > 0 and str(json_res['availableQuantity']).strip().upper() == 'AVAILABLE': inventory_quantity = 5
                                 if int(float(json_res['availableQuantity'])) > 0: inventory_quantity = 5
+                                else: inventory_quantity = 0
                             except: self.print_logs(f"{size_without_q['UPC']} inventory quantity is {json_res['availableQuantity']}")
                             sizes.append(
                                 {

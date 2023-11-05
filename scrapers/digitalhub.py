@@ -339,8 +339,14 @@ class Digitalhub_Scraper:
                                     # variant.position = len(product.variants) + 1
                                     variant.title = str(json_product2['sizeDescription']).strip()
                                     variant.sku = f'{product.number} {product.frame_code} {variant.title}'
-                                    if json_product2['aux']['availabilityColor'] == 2: variant.inventory_quantity = 5
-                                    else: variant.inventory_quantity = 0
+                                    if int(json_product2['disableOrder']) == 0:
+                                        if json_product2['aux']['availabilityColor'] == 2: variant.inventory_quantity = 5
+                                        else: variant.inventory_quantity = 0
+                                    else: 
+                                        # disableOrder: 1
+                                        # disableOrderReason: "SEASON_ACTIVE_WITH_NO_ORDER"
+                                        # It is not possible to order. For more information, contact your local agent.
+                                        variant.inventory_quantity = 0
                                     variant.found_status = 1
                                     variant.wholesale_price = format(int(json_product2['price']), '.2f')
                                     variant.listing_price = format(int(json_product2['publicPrice']), '.2f')
