@@ -458,7 +458,7 @@ class Digitalhub_Scraper:
         response = ''
         for _ in range(0, 10):
             try:
-                response = requests.get(url=url, headers=headers, timeout=20)
+                response = requests.get(url=url, headers=headers, timeout=20, verify=False)
                 if response.status_code == 200: break
                 else: self.print_logs(f'{response.status_code} for {url}')
             except requests.exceptions.ReadTimeout: sleep(1)
