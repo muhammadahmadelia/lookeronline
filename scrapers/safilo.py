@@ -238,6 +238,7 @@ class Safilo_Scraper:
 
     def select_brand(self, brand_name: str):
         flag = False
+        self.browser.execute_script("window.scrollTo(document.body.scrollHeight, 0);")
         self.wait_until_element_found(40, 'xpath', '//ul[@class="nav navbar-nav cc_navbar-nav"]/li//a[contains(text(), "Brands")]')
         try:
             brand_li = self.browser.find_element(By.XPATH, '//ul[@class="nav navbar-nav cc_navbar-nav"]/li//a[contains(text(), "Brands")]')
@@ -257,7 +258,9 @@ class Safilo_Scraper:
             self.print_logs(f'Exception in select_brand: {str(e)}')
             if self.DEBUG: print(f'Exception in select_brand: {str(e)}')
             else: pass
-            flag = False
+            # flag = False
+            a = input(f'{brand_name} Brand not found:')
+            flag = True
         finally: return flag
         
     def select_sunglasses_category(self, glasses_type: str):
