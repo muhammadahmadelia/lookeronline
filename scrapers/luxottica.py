@@ -151,7 +151,7 @@ class Luxottica_Scraper:
                                     self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                                     self.print_logs('Duration: {}\n'.format(end_time - start_time))
                             else: print(f'Cannot find {glasses_type} for {brand.name}')
-
+                    
             else: print(f'Failed to login \nURL: {store.link}\nUsername: {str(store.username)}\nPassword: {str(store.password)}')
         except Exception as e:
             if self.DEBUG: print(f'Exception in Luxottica_All_Scraper controller: {e}')

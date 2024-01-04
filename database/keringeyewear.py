@@ -35,7 +35,7 @@ class Keringeyewear_Mongodb:
 
                     if len(scraped_products) > 0:
                         # get products of specifc brand and type from database
-                        db_products = self.get_products(str(brand.name).strip().title(), product_type)
+                        db_products = self.get_products(brand.name, product_type)
                         print(f'Scraped Products: {len(scraped_products)} | Database Products: {len(db_products)}')
                         self.print_logs(f'Scraped Products: {len(scraped_products)} | Database Products: {len(db_products)}')
 

@@ -96,6 +96,8 @@ class Keringeyewear_Scraper:
                             self.wait_until_loading()
                             
                             total_products = self.get_total_products()
+                            if int(total_products) == 0:
+                                input('Check it')
                             scraped_products = 0
 
                             print(f'Type: {glasses_type} | Total products: {total_products}')

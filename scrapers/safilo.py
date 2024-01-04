@@ -97,7 +97,22 @@ class Safilo_Scraper:
 
                             total_products = self.get_total_products()
                             scraped_products = 0
+                            if int(total_products) == 0:
+                                if self.login(store.username, store.password):
+                                    self.wait_for_page_loading()
 
+                                    self.select_language()
+                                    sleep(0.8)
+                                    self.wait_for_page_loading()
+
+                                    if self.select_brand(brand.name):
+                                        self.select_sunglasses_category(glasses_type)
+                                        self.load_all_products()
+                                    
+                                        self.wait_until_element_found(40, 'xpath', '//div[@class="productListContent cc_results_list cc_grid_container"]/span[@class="cc_product_container productFlexItem"]')
+
+                                        total_products = self.get_total_products()
+                            
                             print(f'Type: {glasses_type} | Total products: {total_products}')
                             self.print_logs(f'Type: {glasses_type} | Total products: {total_products}')
                             start_time = datetime.now()
@@ -238,7 +253,13 @@ class Safilo_Scraper:
 
     def select_brand(self, brand_name: str):
         flag = False
-        self.browser.execute_script("window.scrollTo(document.body.scrollHeight, 0);")
+        try:
+            self.browser.execute_script("window.scrollTo(document.body.scrollHeight, 0);")
+            if self.browser.find_element(By.XPATH, '//ul[@class="nav navbar-nav cc_navbar-nav"]/li//a[contains(text(), "Marchi")]'):
+                self.select_language()
+        except:
+            pass
+
         self.wait_until_element_found(40, 'xpath', '//ul[@class="nav navbar-nav cc_navbar-nav"]/li//a[contains(text(), "Brands")]')
         try:
             brand_li = self.browser.find_element(By.XPATH, '//ul[@class="nav navbar-nav cc_navbar-nav"]/li//a[contains(text(), "Brands")]')
@@ -258,8 +279,8 @@ class Safilo_Scraper:
             self.print_logs(f'Exception in select_brand: {str(e)}')
             if self.DEBUG: print(f'Exception in select_brand: {str(e)}')
             else: pass
+            input(f'Exception in brand: {brand_name}: ')
             # flag = False
-            a = input(f'{brand_name} Brand not found:')
             flag = True
         finally: return flag
         
