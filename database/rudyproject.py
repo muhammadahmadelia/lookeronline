@@ -47,10 +47,10 @@ class Rudyproject_Mongodb:
                         products_ids = [db_product.id for db_product in db_products]
                         self.query_processor.update_variants({'product_id': {'$in': products_ids}}, {'$set': {'found_status': 0, 'inventory_quantity': 0}})
 
-                        # self.printProgressBar(0, len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                        self.printProgressBar(0, len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                         
                         for index, scraped_product in enumerate(scraped_products):
-                            # self.printProgressBar((index + 1), len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                            self.printProgressBar((index + 1), len(scraped_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                             # matching scraped product with database products
                             # return type is integer if matched and None if not matched
                             matched_product_index = next((i for i, db_product in enumerate(db_products) if scraped_product.id == db_product.id), None)
@@ -218,7 +218,7 @@ class Rudyproject_Mongodb:
             if scraped_product.image and scraped_product.image != matched_db_product.image:
                 update_values_dict['image'] = scraped_product.image
 
-            if len(scraped_product.images_360) != 0 and scraped_product.images_360 != matched_db_product.images_360:
+            if scraped_product.images_360 and len(scraped_product.images_360) != 0 and scraped_product.images_360 != matched_db_product.images_360:
                 update_values_dict['images_360'] = scraped_product.images_360
 
             if scraped_product.metafields.for_who and scraped_product.metafields.for_who != matched_db_product.metafields.for_who:

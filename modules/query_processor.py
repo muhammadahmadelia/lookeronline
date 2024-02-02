@@ -27,8 +27,8 @@ class Query_Processor:
                 file_reader = Files_Reader(self.DEBUG)
                 json_data = file_reader.read_json_file(self.config_file)
                 URI = "mongodb+srv://%s:%s@%s/?retryWrites=true&w=majority" % (
-                    quote_plus(json_data[0]['mongodb']['username']), 
-                    quote_plus(json_data[0]['mongodb']['password']), 
+                    quote_plus(json_data[0]['mongodb']['username']),
+                    quote_plus(json_data[0]['mongodb']['password']),
                     json_data[0]['mongodb']['host']
                 )
                 while True:
@@ -41,7 +41,7 @@ class Query_Processor:
         except Exception as e:
             if self.DEBUG: print(f'Exception in get_connection_string: {e}')
             self.print_logs(f'Exception in get_connection_string: {e}')
-    
+
     # # store
     # get all stores from database
     def get_stores(self) -> list[Store]:
@@ -67,7 +67,7 @@ class Query_Processor:
         try:
             if not self.db_client: self.get_db_client()
             db = self.db_client.lookeronline
-            result = db.stores.find_one({'name': name}) 
+            result = db.stores.find_one({'name': name})
             store.name = result['name']
             store.link = result['link']
             store.username = result['username']
@@ -95,9 +95,9 @@ class Query_Processor:
             if self.DEBUG: print(f'Exception in get_brands: {e}')
             self.print_logs(f'Exception in get_brands: {e}')
         finally: return brands
-    
-    #get brand url
-    def get_brand_url(self, brand_name: str) -> str:
+
+    #get brand url for luxottica
+    def get_brand_url_for_luxottica(self, brand_name: str) -> str:
         url: str = ''
         try:
             if not self.db_client: self.get_db_client()
@@ -105,8 +105,8 @@ class Query_Processor:
             brand = db.brands_url.find_one({'brand': brand_name})
             url = brand['url']
         except Exception as e:
-            if self.DEBUG: print(f'Exception in get_brand_url: {e}')
-            self.print_logs(f'Exception in get_brand_url: {e}')
+            if self.DEBUG: print(f'Exception in get_brand_url_for_luxottica: {e}')
+            self.print_logs(f'Exception in get_brand_url_for_luxottica: {e}')
         finally: return url
 
     # products
@@ -205,7 +205,7 @@ class Query_Processor:
             self.print_logs(f'Exception in update_variant: {e}')
 
      # update variant fields against query
-    
+
     def update_variants(self, query: dict, new_values: dict) -> None:
         try:
             if not self.db_client: self.get_db_client()
@@ -314,5 +314,4 @@ class Query_Processor:
             if self.DEBUG: print(f'Exception in get_products_in_model: {e}')
             else: pass
         finally: return products
-    
-    
+

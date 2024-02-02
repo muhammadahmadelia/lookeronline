@@ -47,12 +47,12 @@ class Shopify_Updater:
                 print(f'No. of Products in shopify: {products_count}')
                 self.print_logs(f'No. of Products in shopify: {products_count}')
 
-                # self.printProgressBar(0, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                self.printProgressBar(0, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                 shopify_products = shopify_processor.get_products_by_vendor(brand.name)
 
                 if products_count == len(shopify_products):
                     for database_product_index, database_product in enumerate(brand.products):
-                        # self.printProgressBar(database_product_index + 1, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                        self.printProgressBar(database_product_index + 1, len(brand.products), prefix = 'Progress:', suffix = 'Complete', length = 50)
                         
                         
                         if database_product.shopify_id:
@@ -94,7 +94,9 @@ class Shopify_Updater:
                         if 'Outlet' not in shopify_product['tags']:
                             self.print_logs(f'{shopify_product["title"]} not in database')
                 else: self.print_logs(f'Failed to get {products_count} products from shopify')
-        
+
+                shopify_processor = Shopify_Processor(self.DEBUG, self.config_file, self.logs_filename)
+                shopify_processor.get_store_url()
         except Exception as e:
             self.print_logs(f'Exception in update_inventory_controller controller: {e}')
             if self.DEBUG: print(f'Exception in update_inventory_controller controller: {e}')

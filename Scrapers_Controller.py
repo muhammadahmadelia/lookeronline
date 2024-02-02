@@ -62,8 +62,8 @@ class Scraping_Controller:
 
             for store in stores:
                 self.store = store
-                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Rudyproject', 'Safilo', 'Luxottica']:
-                # if self.store.name in ['Safilo']:
+                # if self.store.name in ['Digitalhub', 'Keringeyewear', 'Rudyproject', 'Safilo', 'Luxottica']:
+                if self.store.name in ['Digitalhub']:
                     query_processor.database_name = str(self.store.name).lower()
 
                     self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
@@ -373,11 +373,7 @@ try:
     log_files = obj.main_controller()
 
     # log_files = [
-    #     'D:\lookeronline\Logs\Digitalhub\Logs 30-11-2023 11-00-05.txt',
-    #     'D:\lookeronline\Logs\Keringeyewear\Logs 30-11-2023 12-46-52.txt',
-    #     'D:\lookeronline\Logs\Luxottica\Logs 30-11-2023 14-15-32.txt',
-    #     'D:\lookeronline\Logs\Rudyproject\Logs 30-11-2023 14-12-41.txt',
-    #     'D:\lookeronline\Logs\Safilo\Logs 30-11-2023 17-24-30.txt'
+    #     'D:\lookeronline\Logs\Digitalhub\Logs 02-02-2024 11-21-52.txt'
     # ]
 
     if log_files:

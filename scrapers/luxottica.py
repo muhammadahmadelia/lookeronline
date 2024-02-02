@@ -320,7 +320,7 @@ class Luxottica_Scraper:
     def get_brand_url(self, brand: Brand, query_processor: Query_Processor) -> str:
         url = ''
         try:
-            url = query_processor.get_brand_url(str(brand.name).strip().lower())
+            url = query_processor.get_brand_url_for_luxottica(str(brand.name).strip().lower())
         except Exception as e:
             if self.DEBUG: print(f'Exception in get_brand_url: {e}')
             self.print_logs((f'Exception in select_category: {e}'))
