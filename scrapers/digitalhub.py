@@ -15,7 +15,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from models.store import Store
 from models.brand import Brand
 from models.product import Product
-# from models.metafields import Metafields
 from models.variant import Variant
 
 from selenium.webdriver.chrome.service import Service as ChromeService
@@ -58,11 +57,7 @@ class Digitalhub_Scraper:
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument("--start-maximized")
         self.chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        # self.args = ["hide_console", ]
-        # self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
-        # self.browser = webdriver.Chrome(options=self.chrome_options)
         self.browser = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=self.chrome_options)
-        # self.browser = webdriver.Chrome(options=self.chrome_options)
         self.auth_token: str = ''
         pass
 
@@ -496,7 +491,12 @@ class Digitalhub_Scraper:
                                     product = Product()
 
                                     product.brand = str(brand.name).strip()
-                                    product.number = product_number
+                                    try: product.number = variant_json.get('fields').get('ModelCode__c')
+                                    except: pass
+                                    try:
+                                        name = variant_json.get('fields').get('Name') 
+                                        product.name = name if name and '@' not in name else ''
+                                    except: pass
                                     product.type = glasses_type
                                     product.frame_code = frame_code
 

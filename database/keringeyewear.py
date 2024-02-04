@@ -6,10 +6,8 @@ from datetime import datetime
 from modules.query_processor import Query_Processor
 
 from models.store import Store
-from models.brand import Brand
 from models.product import Product
 from models.variant import Variant
-from models.metafields import Metafields
 
 class Keringeyewear_Mongodb:
     def __init__(self, DEBUG: bool, results_foldername: str, logs_filename: str, query_processor: Query_Processor) -> None:
@@ -25,7 +23,6 @@ class Keringeyewear_Mongodb:
             self.print_logs('Updating database...')
 
             for brand in store.brands:
-
                 for product_type in brand.product_types:
                     print(f'Brand: {brand.name} | Type: {product_type}')
                     self.print_logs(f'Brand: {brand.name} | Type: {product_type}')
@@ -35,7 +32,7 @@ class Keringeyewear_Mongodb:
 
                     if len(scraped_products) > 0:
                         # get products of specifc brand and type from database
-                        db_products = self.get_products(str(brand.name).strip().title(), product_type)
+                        db_products = self.get_products(brand.name, product_type)
                         print(f'Scraped Products: {len(scraped_products)} | Database Products: {len(db_products)}')
                         self.print_logs(f'Scraped Products: {len(scraped_products)} | Database Products: {len(db_products)}')
 
@@ -85,6 +82,7 @@ class Keringeyewear_Mongodb:
                         self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                         self.print_logs('Duration: {}\n'.format(end_time - start_time))
                     else: self.print_logs(f'Failed to read values from {self.results_foldername} for {brand.name} | {product_type}')
+        
         except Exception as e:
             if self.DEBUG: print(f'Exception in Safilo_Mongodb: controller: {e}')
             self.print_logs(f'Exception in Safilo_Mongodb: controller: {e}')

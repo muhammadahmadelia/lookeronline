@@ -6,10 +6,8 @@ from datetime import datetime
 from modules.query_processor import Query_Processor
 
 from models.store import Store
-from models.brand import Brand
 from models.product import Product
 from models.variant import Variant
-from models.metafields import Metafields
 
 class Rudyproject_Mongodb:
     def __init__(self, DEBUG: bool, results_foldername: str, logs_filename: str, query_processor: Query_Processor) -> None:
