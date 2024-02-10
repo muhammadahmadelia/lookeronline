@@ -565,7 +565,7 @@ class Safilo_Scraper:
         flag = True
         try:
             for p in self.data:
-                if p.number == product.number and p.frame_code == product.frame_code:
+                if p.number == product.number and p.frame_code == product.frame_code and p.lens_code == product.lens_code:
                     flag = False
         except Exception as e:
             self.print_logs(f'Exception in not_in_data: {e}')
