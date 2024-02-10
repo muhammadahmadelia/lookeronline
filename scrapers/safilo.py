@@ -105,8 +105,11 @@ class Safilo_Scraper:
                                 start_time = datetime.now()
 
                                 print(f'Type: {glasses_type} | Total products: {total_products}')
+                                self.print_logs(f'Type: {glasses_type} | Total products: {total_products}')
+                                
                                 print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-
+                                self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+                                
                                 if total_products and int(total_products) > 0: 
                                     self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
                                 
@@ -150,97 +153,6 @@ class Safilo_Scraper:
             self.wait_for_thread_list_to_complete()
             self.save_to_json(self.data)
             self.browser.quit()
-        # try:
-        #     cookies = ''
-        #     self.browser.get(store.link)
-        #     self.wait_until_browsing()
-        #     self.accept_cookies()
-            
-        #     if self.login(store.username, store.password):
-        #         self.wait_for_page_loading()
-
-        #         self.select_language()
-        #         sleep(0.8)
-        #         self.wait_for_page_loading()
-
-
-        #         for brand in store.brands:
-        #             # brand: Brand = brand_with_type['brand']
-        #             print(f'Brand: {brand.name}')
-        #             self.print_logs(f'Brand: {brand.name}')
-
-        #             for glasses_type in brand.product_types:
-
-        #                 if self.select_brand(brand.name):
-        #                     self.select_sunglasses_category(glasses_type)
-        #                     self.load_all_products()
-                        
-        #                     self.wait_until_element_found(40, 'xpath', '//div[@class="productListContent cc_results_list cc_grid_container"]/span[@class="cc_product_container productFlexItem"]')
-
-        #                     total_products = self.get_total_products()
-        #                     scraped_products = 0
-        #                     if int(total_products) == 0:
-        #                         if self.login(store.username, store.password):
-        #                             self.wait_for_page_loading()
-
-        #                             self.select_language()
-        #                             sleep(0.8)
-        #                             self.wait_for_page_loading()
-
-        #                             if self.select_brand(brand.name):
-        #                                 self.select_sunglasses_category(glasses_type)
-        #                                 self.load_all_products()
-                                    
-        #                                 self.wait_until_element_found(40, 'xpath', '//div[@class="productListContent cc_results_list cc_grid_container"]/span[@class="cc_product_container productFlexItem"]')
-
-        #                                 total_products = self.get_total_products()
-                            
-        #                     print(f'Type: {glasses_type} | Total products: {total_products}')
-        #                     self.print_logs(f'Type: {glasses_type} | Total products: {total_products}')
-        #                     start_time = datetime.now()
-        #                     print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-        #                     self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-
-        #                     # self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
-        #                     brand_url = str(self.browser.current_url).strip()
-
-        #                     for product_span in self.browser.find_elements(By.XPATH, '//div[@class="productListContent cc_results_list cc_grid_container"]/span[@class="cc_product_container productFlexItem"]'):
-        #                         scraped_products += 1
-        #                         ActionChains(self.browser).move_to_element(product_span).perform()
-                                
-        #                         product_url, product_name, product_number = self.get_product_data(product_span, brand)
-
-        #                         if not cookies: cookies = self.get_cookies_from_browser()
-        #                         headers = self.get_headers(cookies, brand_url)
-        #                         # self.scrape_product(brand, product_url, product_number, headers, glasses_type)
-        #                         self.create_thread(brand, product_url, product_number, headers, glasses_type)
-        #                         if self.thread_counter >= 10: 
-        #                             self.wait_for_thread_list_to_complete()
-        #                             self.save_to_json(self.data)
-        #                         # self.save_to_json(self.data)
-        #                         # self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
-                            
-        #                     self.wait_for_thread_list_to_complete()
-        #                     self.save_to_json(self.data)
-
-        #                     end_time = datetime.now()
-        #                     print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-        #                     print('Duration: {}\n'.format(end_time - start_time))
-        #                     self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-        #                     self.print_logs('Duration: {}\n'.format(end_time - start_time))
-                        
-        #             self.wait_for_thread_list_to_complete()
-        #             self.save_to_json(self.data)
-
-        #     else: print(f'Failed to login \nURL: {store.link}\nUsername: {str(store.username)}\nPassword: {str(store.password)}')
-        # except Exception as e:
-        #     self.print_logs(f'Exception in Safilo_All_Scraper controller: {e}')
-        #     if self.DEBUG: print(f'Exception in Safilo_All_Scraper controller: {e}')
-        #     else: pass
-        # finally: 
-        #     self.browser.quit()
-        #     self.wait_for_thread_list_to_complete()
-        #     self.save_to_json(self.data)
 
     def wait_until_browsing(self) -> None:
         while True:
@@ -367,6 +279,7 @@ class Safilo_Scraper:
                         brands_data = returnValue['childMenuItems']
                         break
         except Exception as e:
+            self.print_logs(f'Exception in get_brands_data: {e}')
             if self.DEBUG: print(f'Exception in get_brands_data: {e}')
             else: pass
         finally: return brands_data
@@ -394,6 +307,7 @@ class Safilo_Scraper:
                         }
                         break
         except Exception as e:
+            self.print_logs(f'Exception in get_brand_json: {e}')
             if self.DEBUG: print(f'Exception in get_brand_json: {e}')
             else: pass
         finally: return brand_json
@@ -413,6 +327,7 @@ class Safilo_Scraper:
             else:
                 input('No text found for csrf')
         except Exception as e:
+            self.print_logs(f'Exception in get_csrf_token: {e}')
             if self.DEBUG: print(f'Exception in get_csrf_token: {e}')
             else: pass
         finally: return csrf_token
@@ -435,6 +350,7 @@ class Safilo_Scraper:
 
                     scraped_products = len(product_urls)
         except Exception as e:
+            self.print_logs(f'Exception in get_all_product: {e}')
             if self.DEBUG: print(f'Exception in get_all_product: {e}')
             else: pass
         finally: return { 'products': product_urls, 'total_products': total_products }
@@ -489,6 +405,7 @@ class Safilo_Scraper:
                         data.append({'url': product_url, 'variations': variations})
         
         except Exception as e:
+            self.print_logs(f'Exception in get_product_urls: {e}')
             if self.DEBUG: print(f'Exception in get_product_urls: {e}')
             else: pass
         finally: return data, total_products
@@ -532,15 +449,18 @@ class Safilo_Scraper:
                     product_name = self.clean_product_name(product_name)
                 except: pass
                 
-                frame_codes = []
+                frame_and_lens_codes = []
 
                 for key, value in json_data['variationIdToVariations'].items():
-                    frame_code = ''
+                    frame_code, lens_code = '', ''
                     try: frame_code = value['B2B_ColorCode__c']
                     except: pass
 
-                    if frame_code not in frame_codes:
-                        frame_codes.append(frame_code)
+                    try: lens_code = value['B2B_LensCode__c']
+                    except: pass
+
+                    if {'frame_code': frame_code, 'lens_code': lens_code} not in frame_and_lens_codes:
+                        frame_and_lens_codes.append({'frame_code': frame_code, 'lens_code': lens_code})
 
                         product = Product()
                         product.number = product_number
@@ -599,35 +519,59 @@ class Safilo_Scraper:
                         product.metafields = metafields
                         product.add_single_variant(variant)
 
-                        self.data.append(product)
+                        if self.not_in_data(product):
+                            self.data.append(product)
                     else:
                         for product in self.data:
                             if product.number == product_number and product.frame_code == frame_code:
-                                variant = Variant()
-                                try: variant.title = value['B2B_LensWidthSize__c']
+                                sku = ''
+                                try: sku = value['Name'] if value['Name'] else value['StockKeepingUnit']
                                 except: pass
-                                try: variant.sku = value['Name'] if value['Name'] else value['StockKeepingUnit']
-                                except: pass
-                                try: variant.inventory_quantity = 5 if value['B2B_StockValue__c'] > 0 else 0
-                                except: pass
-                                try: variant.listing_price = self.get_price(json_data['pricebookEntriesByIds'], key)
-                                except: pass
-                                try: variant.barcode_or_gtin = value['B2B_EANCode__c']
-                                except: pass
-                                try: variant.size = f'{variant.title}-{product.bridge}-{product.template}'
-                                except: pass
+                                flag = True
+                                for variant in product.variants:
+                                    if variant.sku == sku:
+                                        flag = False
+                                        break
 
-                                try: product.metafields.size_bridge_template = f', {variant.title}-{product.bridge}-{product.template}'
-                                except: pass
-                                try: product.metafields.gtin1 += f', {variant.barcode_or_gtin}'
-                                except: pass
+                                if flag:
+                                    variant = Variant()
+                                    try: variant.title = value['B2B_LensWidthSize__c']
+                                    except: pass
+                                    try: variant.sku = sku
+                                    except: pass
+                                    try: variant.inventory_quantity = 5 if value['B2B_StockValue__c'] > 0 else 0
+                                    except: pass
+                                    try: variant.listing_price = self.get_price(json_data['pricebookEntriesByIds'], key)
+                                    except: pass
+                                    try: variant.barcode_or_gtin = value['B2B_EANCode__c']
+                                    except: pass
+                                    try: variant.size = f'{variant.title}-{product.bridge}-{product.template}'
+                                    except: pass
 
-                                product.add_single_variant(variant)
+                                    try: product.metafields.size_bridge_template = f', {variant.title}-{product.bridge}-{product.template}'
+                                    except: pass
+                                    try: product.metafields.gtin1 += f', {variant.barcode_or_gtin}'
+                                    except: pass
+
+                                    product.add_single_variant(variant)
                                 break
 
         except Exception as e:
+            self.print_logs(f'Exception in get_product_details: {e}')
             if self.DEBUG: print(f'Exception in get_product_details: {e}')
             else: pass
+
+    def not_in_data(self, product: Product) -> bool:
+        flag = True
+        try:
+            for p in self.data:
+                if p.number == product.number and p.frame_code == product.frame_code:
+                    flag = False
+        except Exception as e:
+            self.print_logs(f'Exception in not_in_data: {e}')
+            if self.DEBUG: print(f'Exception in not_in_data: {e}')
+            else: pass
+        finally: return flag
 
     def clean_product_name(self, product_name: str) -> None:
         try:

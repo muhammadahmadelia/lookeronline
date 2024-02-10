@@ -56,6 +56,7 @@ class Luxottica_Scraper:
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument("--start-maximized")
         self.chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        self.store: Store = ''
         # self.args = ["hide_console", ]
         # self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
         # self.browser = webdriver.Chrome(options=self.chrome_options)
@@ -66,10 +67,11 @@ class Luxottica_Scraper:
         try:
             cookies = ''
             dtPC = ''
-            self.browser.get(store.link)
+            self.store = store
+            self.browser.get(self.store.link)
             self.wait_until_browsing()
 
-            if self.login(store.link, store.username, store.password):
+            if self.login():
                 sleep(10)
                 for brand in store.brands:
                     
@@ -79,8 +81,11 @@ class Luxottica_Scraper:
 
                     if brand_url:
                         for glasses_type in brand.product_types:
-                            # if glasses_type_index != 0:
-                            #     self.browser.get('https://my.essilorluxottica.com/myl-it/en-GB/homepage')
+
+                            self.browser.refresh()
+                            self.wait_until_browsing()
+                            if self.wait_until_element_found(5, 'xpath', '//input[@id="signInName"]'):
+                                self.login()
 
                             self.browser.get(brand_url)
                             self.wait_until_browsing()
@@ -96,9 +101,12 @@ class Luxottica_Scraper:
                                 if int(total_products) > 0:
                                     page_number = 1
                                     scraped_products = 0
+
                                     start_time = datetime.now()
                                     print(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                                     self.print_logs(f'Start Time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
+
+                                    cookies = ''
 
                                     # self.printProgressBar(0, int(total_products), prefix = 'Progress:', suffix = 'Complete', length = 50)
 
@@ -135,6 +143,11 @@ class Luxottica_Scraper:
 
 
                                         if int(scraped_products) < int(total_products):
+                                            self.browser.refresh()
+                                            self.wait_until_browsing()
+                                            if self.wait_until_element_found(5, 'xpath', '//input[@id="signInName"]'):
+                                                self.login()
+
                                             page_number += 1
                                             self.move_to_next_page(category_url, page_number)
                                             self.wait_until_element_found(40, 'css_selector', 'div[class^="PLPTitle__Section"] > p[class^="CustomText__Text"]')
@@ -209,7 +222,7 @@ class Luxottica_Scraper:
             self.print_logs(f'Exception in accept_cookies_after_login: {str(e)}')
             if self.DEBUG: print(f'Exception in accept_cookies_after_login: {str(e)}')
 
-    def login(self, url, username: str, password: str) -> bool:
+    def login(self) -> bool:
         login_flag = False
         while not login_flag:
             try:
@@ -217,7 +230,7 @@ class Luxottica_Scraper:
                 if self.wait_until_element_found(10, 'xpath', '//input[@id="signInName"]'):
                     for _ in range(0, 30):
                         try:
-                            self.browser.find_element(By.XPATH, '//input[@id="signInName"]').send_keys(username)
+                            self.browser.find_element(By.XPATH, '//input[@id="signInName"]').send_keys(self.store.username)
                             break
                         except: sleep(0.3)
                     sleep(0.2)
@@ -232,7 +245,7 @@ class Luxottica_Scraper:
                         if self.wait_until_element_found(20, 'xpath', '//input[@id="password"]'):
                             for _ in range(0, 30):
                                 try:
-                                    self.browser.find_element(By.XPATH, '//input[@id="password"]').send_keys(password)
+                                    self.browser.find_element(By.XPATH, '//input[@id="password"]').send_keys(self.store.password)
                                     break
                                 except: sleep(0.5)
                             sleep(0.2)
@@ -269,6 +282,10 @@ class Luxottica_Scraper:
     def select_category(self, brand_url: str, glasses_type: str) -> bool:
         category_found = False
         try:
+            self.browser.refresh()
+            self.wait_until_browsing()
+            if self.wait_until_element_found(5, 'xpath', '//input[@id="signInName"]'): self.login()
+
             category_css_selector = ''
             if glasses_type == 'Sunglasses': category_css_selector = 'button[data-element-id^="Categories_sunglasses_"]'
             elif glasses_type == 'Sunglasses Kids': category_css_selector = 'button[data-element-id^="Categories_sunglasses-kids"]'
@@ -326,54 +343,6 @@ class Luxottica_Scraper:
             self.print_logs((f'Exception in select_category: {e}'))
         finally: return url
 
-        # if str(brand.name).strip().lower() == 'arnette':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/arnette'
-        # elif str(brand.name).strip().lower() == 'burberry':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/burberry'
-        # elif str(brand.name).strip().lower() == 'bvlgari':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/bvlgari'
-        # elif str(brand.name).strip().lower() == 'dolce & gabbana':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/dolce-gabbana'
-        # elif str(brand.name).strip().lower() == 'ess':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/ess'
-        # elif str(brand.name).strip().lower() == 'emporio armani':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/emporio-armani'
-        # elif str(brand.name).strip().lower() == 'giorgio armani':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/giorgio-armani'
-        # elif str(brand.name).strip().lower() == 'luxottica':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/luxottica'
-        # elif str(brand.name).strip().lower() == 'michael kors':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/michael-kors'
-        # elif str(brand.name).strip().lower() == 'oakley':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/oakley'
-        # elif str(brand.name).strip().lower() == 'persol':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/persol'
-        # elif str(brand.name).strip().lower() == 'polo ralph lauren':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/polo-ralph-lauren'
-        # elif str(brand.name).strip().lower() == 'prada':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/prada'
-        # elif str(brand.name).strip().lower() == 'prada linea rossa':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/prada-linea-rossa'
-        # elif str(brand.name).strip().lower() == 'ralph':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/ralph'
-        # elif str(brand.name).strip().lower() == 'ralph lauren':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/ralph-lauren'
-        # elif str(brand.name).strip().lower() == 'ray-ban':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/ray-ban'
-        # elif str(brand.name).strip().lower() == 'sferoflex':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/sferoflex'
-        # elif str(brand.name).strip().lower() == 'valentino':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/valentino'
-        # elif str(brand.name).strip().lower() == 'versace':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/versace'
-        # elif str(brand.name).strip().lower() == 'vogue':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/vogue'
-        # elif str(brand.name).strip().lower() == 'miu miu':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/miu-miu'
-        # elif str(brand.name).strip().lower() == 'tiffany':
-        #     url = 'https://my.essilorluxottica.com/myl-it/en-GB/preplp/tiffany'
-        # return url
-
     def close_last_tab(self) -> None:
         self.browser.close()
         self.browser.switch_to.window(self.browser.window_handles[len(self.browser.window_handles) - 1])
@@ -385,12 +354,6 @@ class Luxottica_Scraper:
                 try:
                     total_sunglasses = str(self.browser.find_element(By.CSS_SELECTOR, 'div[class^="PLPTitle__Section"] > p[class^="CustomText__Text"]').text).strip()
                     if '(' in total_sunglasses:
-                        # if 'Sunglasses' in total_sunglasses:
-                        #     total_sunglasses = total_sunglasses.replace('Sunglasses', '').replace('(', '').replace(')', '').strip()
-                        # elif 'Eyeglasses' in total_sunglasses:
-                        #     total_sunglasses = total_sunglasses.replace('Eyeglasses', '').replace('(', '').replace(')', '').strip()
-                        # elif 'Goggles and helmets' in total_sunglasses:
-                        #     total_sunglasses = total_sunglasses.replace('Goggles and helmets', '').replace('(', '').replace(')', '').strip()
                         total_sunglasses = total_sunglasses.split('(')[-1].strip().replace(')', '').strip()
                         if total_sunglasses: total_products = int(total_sunglasses)
                         else: total_products = 0
@@ -704,7 +667,7 @@ class Luxottica_Scraper:
                     elif attribute['identifier'] == 'LENS_MATERIAL':
                         for value in attribute['values']: values.append(value['value'])
                         lens_material = ', '.join(values)
-                    elif attribute['identifier'] == 'FACE_SHAPE':
+                    elif attribute['identifier'] == 'FRAME_SHAPE':
                         for value in attribute['values']: values.append(value['value'])
                         frame_shape = ', '.join(values)
                     elif attribute['identifier'] == 'FRAME_MATERIAL':
