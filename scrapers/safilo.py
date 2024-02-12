@@ -5,17 +5,17 @@ import datetime
 from time import sleep
 from datetime import datetime
 import requests
-from urllib import parse
-from bs4 import BeautifulSoup
+# from urllib import parse
+# from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.action_chains import ActionChains
+# from selenium.webdriver.support.ui import Select
+# from selenium.webdriver.common.action_chains import ActionChains
 from models.store import Store
-from models.brand import Brand
+# from models.brand import Brand
 from models.product import Product
 from models.metafields import Metafields
 from models.variant import Variant
