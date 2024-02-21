@@ -200,8 +200,8 @@ class Shopify_Controller:
 
             for store in stores:
                 self.store = store
-                # if self.store.name in ['Digitalhub', 'Keringeyewear', 'Rudyproject', 'Safilo', 'Luxottica']:
-                if self.store.name in ['Safilo']:
+                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Rudyproject', 'Safilo', 'Luxottica']:
+                # if self.store.name in ['Safilo']:
                     query_processor.database_name = str(self.store.name).lower()
                     # self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
                     
@@ -215,12 +215,12 @@ class Shopify_Controller:
                     self.store.brands = query_processor.get_brands()
                     if self.store.brands:
                         
-                        new_list = []
-                        for brand in self.store.brands:
-                            if brand.name == 'Fossil':
-                                new_list.append(brand)
-                                break
-                        self.store.brands = new_list
+                        # new_list = []
+                        # for brand in self.store.brands:
+                        #     if brand.name == 'Fossil':
+                        #         new_list.append(brand)
+                        #         break
+                        # self.store.brands = new_list
                         
                         shopify_obj = Shopify_Updater(self.DEBUG, self.store, self.config_file, query_processor, self.logs_filename)
                         shopify_obj.update_inventory_controller()
