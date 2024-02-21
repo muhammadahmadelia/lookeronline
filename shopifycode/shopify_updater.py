@@ -34,6 +34,8 @@ class Shopify_Updater:
             print(f'\nUpdating product inventory for {str(self.store.name).strip().title()}')
             self.print_logs(f'\nUpdating product inventory for {str(self.store.name).strip().title()}')
 
+            new_products_counter = 0
+
             for brand in self.store.brands:
                 template_suffix = ''
                 print(f'\nBrand: {brand.name}')
@@ -88,7 +90,14 @@ class Shopify_Updater:
                             
                             else: self.print_logs(f'{database_product.id} product not found on shopify store')
                         else: 
+                            new_products_counter += 1
                             self.add_new_product(database_product, brand, template_suffix, shopify_processor)
+
+                            if new_products_counter == 10:
+                                new_products_counter = 0
+                                shopify_processor = Shopify_Processor(self.DEBUG, self.config_file, self.logs_filename)
+                                shopify_processor.get_store_url()
+
 
                     for shopify_product in shopify_products:
                         if 'Outlet' not in shopify_product['tags']:
@@ -445,11 +454,11 @@ class Shopify_Updater:
             
             # get product description for new product
             product_description = self.utils.create_product_description(brand, product, self.template_file_path)
-            
+
             # get tags for new product
             tags = self.utils.get_product_tags(brand, product, [])
             tags.insert(0, 'New')
-            
+
             # get new variant json and store them in list
             new_variants_json: list[dict] = []
             for index, variant in enumerate(product.variants):
@@ -459,7 +468,7 @@ class Shopify_Updater:
             # get new product json
             new_product_json = self.get_new_product_json(product_title, product_description, brand.name, product.type, ', '.join(tags), new_variants_json, template_suffix)
             if new_product_json:
-                json_data = shopify_processor.insert_product(new_product_json)
+                json_data, response_text = shopify_processor.insert_product(new_product_json)
                 if json_data:
                     # get shopify id from inserted product response
                     product.shopify_id = str(json_data['product']['id']).strip()
@@ -500,7 +509,8 @@ class Shopify_Updater:
                             tags += f', spinimages={no_of_images}'
                             tags = str(tags).strip()
                             shopify_processor.update_product({ "product": { "id": product.shopify_id, "tags": tags } })
-
+                else:
+                    self.print_logs(f'Get this while adding product: {response_text}')
         except Exception as e: 
             self.print_logs(f'Exception in add_new_product: {e}')
             if self.DEBUG: print(f'Exception in add_new_product: {e}')

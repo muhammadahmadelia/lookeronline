@@ -191,7 +191,7 @@ class Shopify_Controller:
         self.result_files: list[str] = []
         pass
 
-    def update_inventory_controller(self) -> None:
+    def update_inventory_controller(self, log_files: list[str]) -> None:
         try:
             
             # getting all stores from database
@@ -200,30 +200,32 @@ class Shopify_Controller:
 
             for store in stores:
                 self.store = store
-                query_processor.database_name = str(self.store.name).lower()
-                # self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
-                
-                # if not os.path.exists('Logs'): os.makedirs('Logs')
-                # if not os.path.exists(self.logs_folder_path): os.makedirs(self.logs_folder_path)
-                # self.create_logs_filename()
-                # self.remove_extra_log_files()
+                # if self.store.name in ['Digitalhub', 'Keringeyewear', 'Rudyproject', 'Safilo', 'Luxottica']:
+                if self.store.name in ['Safilo']:
+                    query_processor.database_name = str(self.store.name).lower()
+                    # self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
+                    
 
-                # for log_file in log_files:
-                #     if '.txt' in log_file and f'/Logs/{self.store.name}/' in log_file:
-                #         self.logs_filename = log_file
-                #         break
-
-                files = glob.glob(f'/Logs/{self.store.name}/*.txt')
-                if files:
-                    self.logs_filename = max(files, key=os.path.getctime)
-
-                # getting all brands of store from database
-                self.store.brands = query_processor.get_brands()
-                if self.store.brands:
-                    shopify_obj = Shopify_Updater(self.DEBUG, self.store, self.config_file, query_processor, self.logs_filename)
-                    shopify_obj.update_inventory_controller()
-                    self.create_excel_file(shopify_obj)
-                else: print('No brand selected to scrape and update') 
+                    for log_file in log_files:
+                        if '.txt' in log_file and f'Logs\\{self.store.name}\\' in log_file:
+                            self.logs_filename = log_file
+                            break
+                    
+                    # getting all brands of store from database
+                    self.store.brands = query_processor.get_brands()
+                    if self.store.brands:
+                        
+                        new_list = []
+                        for brand in self.store.brands:
+                            if brand.name == 'Fossil':
+                                new_list.append(brand)
+                                break
+                        self.store.brands = new_list
+                        
+                        shopify_obj = Shopify_Updater(self.DEBUG, self.store, self.config_file, query_processor, self.logs_filename)
+                        shopify_obj.update_inventory_controller()
+                        self.create_excel_file(shopify_obj)
+                    else: print('No brand selected to scrape and update') 
         except Exception as e:
             if self.DEBUG: print(f'Exception in update_inventory_controller: {e}')
             else: pass
@@ -365,6 +367,16 @@ def send_mail(send_from, from_pass, send_to, subject, text, files=None):
         smtp.login(send_from, from_pass)
         smtp.sendmail(send_from, send_to, msg.as_string())
 
+def get_latest_log_files(DEBUG: bool) -> list[str]:
+    log_files: list[str] = []
+    try:
+        for folder_name in glob.glob('Logs/*'):
+            files = glob.glob(f'{folder_name}/*.txt')
+            if files:
+                log_files.append(max(files, key=os.path.getctime))
+    except Exception as e:
+        if DEBUG: print(f'Exception in get_latest_log_files: {e}')
+    finally: return log_files
 
 DEBUG = True
 try:
@@ -374,8 +386,10 @@ try:
     
     if '.exe' in pathofpyfolder.split('\\')[-1]: DEBUG = False
     obj = Scraping_Controller(DEBUG, path)
-    log_files = obj.main_controller()
+    obj.main_controller()
 
+    log_files = get_latest_log_files(DEBUG)
+    
     obj = Shopify_Controller(DEBUG, path)
     result_files = obj.update_inventory_controller(log_files)
     if result_files:

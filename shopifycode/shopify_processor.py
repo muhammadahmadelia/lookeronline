@@ -215,17 +215,20 @@ class Shopify_Processor:
         return updation_flag
     
     # insert new product
-    def insert_product(self, new_product_json: dict) -> dict:
+    def insert_product(self, new_product_json: dict):
         json_data = {}
+        response_text = ''
         try:
             endpoint = 'products.json'
             flag = False
             while not flag:
                 try:
                     response = self.session.post(url=(self.URL + endpoint), json=new_product_json)
+                    response_text = response.text
                     if response.status_code == 201 or response.status_code == 200:
                         json_data = response.json() # json.loads(response.text)
                         flag = True
+                    elif response.status_code == 429: break
                     elif response.status_code == 429 or response.status_code == 430: sleep(1)
                     else: 
                         self.print_logs(f'{response.status_code} found by inserting product to shopify: {new_product_json["title"]} Text: {response.text}')
@@ -238,7 +241,7 @@ class Shopify_Processor:
         except Exception as e:
             if self.DEBUG: print(f'Exception in insert_product: {str(e)}')
             self.print_logs(f'Exception in insert_product: {str(e)}')
-        finally: return json_data
+        finally: return json_data, response_text
 
     ## metafields ##
     # get product metafileds
