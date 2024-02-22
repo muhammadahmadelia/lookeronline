@@ -89,6 +89,7 @@ class Safilo_Scraper:
                         if not brands_data: brands_data = self.get_brands_data(cookies)
 
                         if brands_data:
+                            
                             brand_json = self.get_brand_json(brand.name, brands_data, cookies)
                             if brand_json:
                                 brand_url = brand_json['brand_url']
@@ -186,10 +187,10 @@ class Safilo_Scraper:
     def accept_cookies(self) -> None:
         try:
             # accept cookies if found
-            if self.wait_until_element_found(30, 'xpath', '//button[@id="acceptCookiesPolicy"]'):
+            if self.wait_until_element_found(30, 'xpath', '//button[contains(@id, "acceptCookiesPolicy")]'):
                 for _ in range(0, 20):
                     try:
-                        self.browser.find_element(By.XPATH,'//button[@id="acceptCookiesPolicy"]').click()
+                        self.browser.find_element(By.XPATH,'//button[contains(@id, "acceptCookiesPolicy")]').click()
                         sleep(0.2)
                         break
                     except: sleep(0.5)
@@ -201,15 +202,15 @@ class Safilo_Scraper:
     def login(self, email: str, password: str) -> bool:
         login_flag = False
         try:
-            if self.wait_until_element_found(20, 'xpath', '//input[@id="emailField"]'):
-                self.browser.find_element(By.XPATH, '//input[@id="emailField"]').send_keys(email)
+            if self.wait_until_element_found(20, 'xpath', '//input[@class="username"]'):
+                self.browser.find_element(By.XPATH, '//input[@class="username"]').send_keys(email)
                 sleep(0.2)
-                if self.wait_until_element_found(20, 'xpath', '//input[@id="passwordField"]'):
-                    self.browser.find_element(By.XPATH, '//input[@id="passwordField"]').send_keys(password)
+                if self.wait_until_element_found(20, 'xpath', '//input[@class="password"]'):
+                    self.browser.find_element(By.XPATH, '//input[@class="password"]').send_keys(password)
                     sleep(0.2)
-                    self.browser.find_element(By.XPATH, '//input[@id="send2Dsk"]').click()
+                    self.browser.find_element(By.XPATH, '//button[@class="login-btn"]').click()
 
-                    if self.wait_until_element_found(20, 'xpath', '//button/span[contains(text(), "Brands")]'): login_flag = True
+                    if self.wait_until_element_found(100, 'xpath', '//button/span[contains(text(), "Brands")]'): login_flag = True
                 else: print('Password input not found')
             else: print('Email input not found')
         except Exception as e:
@@ -272,6 +273,7 @@ class Safilo_Scraper:
                 params=params,
                 cookies=cookies,
                 headers=headers,
+                verify=False
             )
             if response.status_code == 200:
                 for returnValue in response.json()['returnValue']:
@@ -298,6 +300,7 @@ class Safilo_Scraper:
                         url=API,
                         cookies=cookies,
                         headers=headers,
+                        verify=False
                     )
                     if response.status_code == 200:
                         brand_url = response.json()['canonicalUrl']
@@ -374,20 +377,22 @@ class Safilo_Scraper:
                 },
                 'cacheable': False,
             }
-            API = 'https://safilo.my.site.com/safilob2b/webruntime/api/apex/execute?language=en-US&asGuest=false&htmlEncode=false'
+            API = 'https://www.youandsafilo.com/webruntime/api/apex/execute?language=en-US&asGuest=false&htmlEncode=false'
             headers = self.get_headers(brand_url)
 
             headers['csrf-token'] = csrf_token
             headers['origin'] = 'https://safilo.my.site.com'
-
+            # for _ in range(0, 10):
             response = requests.post(
                 url=API,
                 cookies=cookies,
                 headers=headers,
                 json=json_data,
+                verify=False
             )
             
             if response.status_code == 200:
+                
                 total_products = response.json()['returnValue']['productsPage']['total']
 
                 for product_json in response.json()['returnValue']['productsPage']['products']:
@@ -403,7 +408,11 @@ class Safilo_Scraper:
 
                     if product_url not in product_urls:
                         data.append({'url': product_url, 'variations': variations})
-        
+            #     break
+                # else:
+                #     if 'JSONObject["classname"] not found.' not in response.text:
+                #         break
+                #     sleep(1.5)
         except Exception as e:
             self.print_logs(f'Exception in get_product_urls: {e}')
             if self.DEBUG: print(f'Exception in get_product_urls: {e}')
@@ -430,13 +439,14 @@ class Safilo_Scraper:
                 'cacheable': False,
             }
 
-            API = 'https://safilo.my.site.com/safilob2b/webruntime/api/apex/execute?language=en-US&asGuest=false&htmlEncode=false'
+            API = 'https://www.youandsafilo.com/webruntime/api/apex/execute?language=en-US&asGuest=false&htmlEncode=false'
 
             response = requests.post(
                 url=API,
                 cookies=cookies,
                 headers=headers,
                 json=json_data,
+                verify=False
             )
             if response.status_code == 200:
                 json_data = response.json()['returnValue']
