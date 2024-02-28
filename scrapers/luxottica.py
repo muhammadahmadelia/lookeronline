@@ -253,15 +253,15 @@ class Luxottica_Scraper:
                             self.wait_until_browsing()
                             for _ in range(0, 100):
                                 try:
-                                    a = self.browser.find_element(By.CSS_SELECTOR, 'div[class^="AccountMenu__MenuContainer"]')
+                                    a = self.browser.find_element(By.XPATH, "//button[contains(text(), 'BRAND')]")
                                     if a:
                                         login_flag = True
                                         if '/myl-it/it-IT/homepage' in self.browser.current_url:
                                             self.browser.get('https://my.essilorluxottica.com/myl-it/en-GB/homepage')
                                         self.accept_cookies_after_login()
                                         break
-                                    else: sleep(0.3)
-                                except: sleep(0.3)
+                                    else: sleep(0.8)
+                                except: sleep(0.8)
                         else: print('Password input not found')
                 else: print('Email input not found')
             except Exception as e:
@@ -269,7 +269,7 @@ class Luxottica_Scraper:
                 if self.DEBUG: print(f'Exception in login: {str(e)}')
 
             if not login_flag:
-                self.browser.get(url)
+                self.browser.get(self.store.link)
                 self.wait_until_browsing()
         return login_flag
 
@@ -715,7 +715,8 @@ class Luxottica_Scraper:
                             # if json_res['inventoryStatus'] == 'Available': inventory_quantity = 5
                             try:
                                 # if int(float(json_res['availableQuantity'])) > 0 and str(json_res['availableQuantity']).strip().upper() == 'AVAILABLE': inventory_quantity = 5
-                                if int(float(json_res['availableQuantity'])) > 0: inventory_quantity = 5
+                                # if int(float(json_res['availableQuantity'])) > 0: inventory_quantity = 5
+                                if str(json_res['x_state']).strip().upper() == 'AVAILABLE': inventory_quantity = 5
                                 else: inventory_quantity = 0
                             except: self.print_logs(f"{size_without_q['UPC']} inventory quantity is {json_res['availableQuantity']}")
                             sizes.append(

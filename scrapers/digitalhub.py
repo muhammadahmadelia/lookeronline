@@ -267,7 +267,7 @@ class Digitalhub_Scraper:
             response = requests.post(url=BRAND_DATA_API, headers=headers, cookies=cookies, data=data, verify=False)
             if response.status_code == 200:
                 for value in response.json()['actions']:
-                    if str(brand_name).strip().title() in str(value).strip():
+                    if str(brand_name).strip().lower() in str(value).strip().lower():
                         for value2 in json.loads(value['returnValue']['returnValue']):
                             if value2['section'] == 'nav':
                                 brand_data = value2['children']

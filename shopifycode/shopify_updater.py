@@ -65,7 +65,7 @@ class Shopify_Updater:
                                 # pop the matched index product from list of shopify products
                                 matched_shopify_product = shopify_products.pop(matched_shopify_product_index)
                                 # check if Outlet tag is not in shopify product tags
-                                if 'Outlet' not in matched_shopify_product['tags']:
+                                if 'Outlet' not in matched_shopify_product['tags'] and 'available now' not in matched_shopify_product['tags']:
                                     if matched_shopify_product['template_suffix'] and not template_suffix: template_suffix = matched_shopify_product['template_suffix']
                                     # update product type if not matched
                                     if str(database_product.type).strip().lower() != str(matched_shopify_product['product_type']).strip().lower():
