@@ -708,8 +708,8 @@ class Digitalhub_Scraper:
                         'sku': str(variant.sku).strip().upper(),
                         'inventory_quantity': int(variant.inventory_quantity),
                         'found_status': int(variant.found_status),
-                        'wholesale_price': float(variant.wholesale_price),
-                        'listing_price': float(variant.listing_price),
+                        'wholesale_price': float(variant.wholesale_price) if variant.wholesale_price else 0.00,
+                        'listing_price': float(variant.listing_price) if variant.listing_price else 0.00,
                         'barcode_or_gtin': str(variant.barcode_or_gtin).strip(),
                         'size': str(variant.size).strip().replace(' ', '')
                     }
