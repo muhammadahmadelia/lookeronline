@@ -29,13 +29,13 @@ from modules.files_reader import Files_Reader
 from scrapers.digitalhub import Digitalhub_Scraper
 from scrapers.safilo import Safilo_Scraper
 from scrapers.keringeyewear import Keringeyewear_Scraper
-from scrapers.rudyproject import Rudyproject_Scraper
+# from scrapers.rudyproject import Rudyproject_Scraper
 from scrapers.luxottica import Luxottica_Scraper
 
 from database.digitalhub import Digitalhub_Mongodb
 from database.safilo import Safilo_Mongodb
 from database.keringeyewear import Keringeyewear_Mongodb
-from database.rudyproject import Rudyproject_Mongodb
+# from database.rudyproject import Rudyproject_Mongodb
 from database.luxottica import Luxottica_Mongodb
 
 from shopifycode.shopify_updater import Shopify_Updater
@@ -62,7 +62,7 @@ class Scraping_Controller:
 
             for store in stores:
                 self.store = store
-                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Rudyproject', 'Safilo', 'Luxottica']:
+                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Luxottica']:
                 # if self.store.name in ['Safilo']:
                     query_processor.database_name = str(self.store.name).lower()
 
@@ -94,13 +94,13 @@ class Scraping_Controller:
                             elif self.store.name == 'Safilo': Safilo_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
                             elif self.store.name == 'Keringeyewear': Keringeyewear_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
                             elif self.store.name == 'Luxottica': Luxottica_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store, query_processor)
-                        elif self.store.name == 'Rudyproject': Rudyproject_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
+                        # elif self.store.name == 'Rudyproject': Rudyproject_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
 
 
                         if self.store.name == 'Digitalhub': Digitalhub_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                         elif self.store.name == 'Safilo': Safilo_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                         elif self.store.name == 'Keringeyewear': Keringeyewear_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        elif self.store.name == 'Rudyproject': Rudyproject_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        # elif self.store.name == 'Rudyproject': Rudyproject_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                         elif self.store.name == 'Luxottica': Luxottica_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
 
                         
@@ -200,7 +200,7 @@ class Shopify_Controller:
 
             for store in stores:
                 self.store = store
-                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Rudyproject', 'Safilo', 'Luxottica']:
+                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Luxottica']:
                 # if self.store.name in ['Safilo']:
                     query_processor.database_name = str(self.store.name).lower()
                     # self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
