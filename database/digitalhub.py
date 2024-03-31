@@ -105,7 +105,7 @@ class Digitalhub_Mongodb:
                         product.id = str(json_d['_id']).strip().replace('-', '/')
                         product.number = str(json_d['number']).strip().upper().replace('-', '/')
                         product.name = str(json_d['name']).strip().title()
-                        product.brand = str(json_d['brand']).strip()
+                        product.brand = str(brand_name).strip()
                         product.frame_code = str(json_d['frame_code']).strip().upper().replace('-', '/')
                         product.lens_code = str(json_d['lens_code']).strip().upper().replace('-', '/')
                         product.type = str(json_d['type']).strip().title()
