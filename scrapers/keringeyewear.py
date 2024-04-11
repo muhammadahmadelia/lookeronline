@@ -97,7 +97,15 @@ class Keringeyewear_Scraper:
                             
                             total_products = self.get_total_products()
                             if int(total_products) == 0:
-                                input('Check it')
+                                login_flag = False
+
+                                while not login_flag:
+                                    if self.login(store.username, store.password):
+                                        login_flag = True
+                                        self.browser.get(brand_url_with_glasses_type)
+                                        self.wait_until_loading()
+                                        total_products = self.get_total_products()
+                                    
                             scraped_products = 0
 
                             print(f'Type: {glasses_type} | Total products: {total_products}')
