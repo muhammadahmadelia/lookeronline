@@ -63,7 +63,7 @@ class Scraping_Controller:
             for store in stores:
                 self.store = store
                 if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Luxottica']:
-                # if self.store.name in ['Safilo']:
+                # if self.store.name in ['Keringeyewear']:
                     query_processor.database_name = str(self.store.name).lower()
 
                     self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'

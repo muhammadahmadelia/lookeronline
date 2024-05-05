@@ -121,14 +121,14 @@ class Keringeyewear_Scraper:
                             # self.printProgressBar(scraped_products, total_products, prefix = 'Progress:', suffix = 'Complete', length = 50)
                             if not product_cookies: product_cookies = self.get_cookies_for_product()
                             headers = self.get_headers_for_product(product_cookies, brand_url_with_glasses_type)
-
+                            # print(len(products_data))
                             for product_data in products_data:
                                 scraped_products += 1
                                 product_number = product_data[0]
                                 product_url = product_data[1]
                                 self.create_thread(brand, glasses_type, product_number, product_url, headers)
                                 sleep(0.5)
-                                if self.thread_counter >= 40: 
+                                if self.thread_counter >= 10: 
                                     self.wait_for_thread_list_to_complete()
                                     self.save_to_json(self.data)
 
@@ -485,12 +485,13 @@ class Keringeyewear_Scraper:
     def get_headers_for_product(self, cookies: str, brand_url: str) -> dict:
         return {
                 'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                'accept-encoding': 'gzip, deflate, br',
+                # 'accept-encoding': 'gzip, deflate, br',
                 'accept-language': 'en-US,en;q=0.9',
                 'cache-control': 'max-age=0',
+                'priority': 'u=0, i',
                 'cookie': cookies,
                 'referer': brand_url,
-                'sec-ch-ua': '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
+                # 'sec-ch-ua': '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
                 'sec-ch-ua-mobile': '?0',
                 'sec-ch-ua-platform': '"Windows"',
                 'sec-fetch-dest': 'document',
@@ -498,7 +499,7 @@ class Keringeyewear_Scraper:
                 'sec-fetch-site': 'same-origin',
                 'sec-fetch-user': '?1',
                 'upgrade-insecure-requests': '1',
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.101 Safari/537.36'
+                'user-agent': self.browser.execute_script('return navigator.userAgent;')
             }
     
     def get_headers_for_page(self, cookies: str, brand_url: str) -> dict:
@@ -563,6 +564,9 @@ class Keringeyewear_Scraper:
                     except Exception as e:
                         if self.DEBUG: print(f'Exception in product: {e}')
                         self.print_logs(f'Exception in product: {e}')
+            else:
+                if response: self.print_logs(f'{response.status_code} for {URL}')
+                else: self.print_logs(f'Timeout exception for {URL}')
         except Exception as e:
             if self.DEBUG: print(f'Exception in scrape_product: {e}')
             self.print_logs(f'Exception in scrape_product: {e}')
@@ -572,9 +576,11 @@ class Keringeyewear_Scraper:
         try:
             for _ in range(0, 10):
                 try:
-                    response = requests.get(url=url, headers=headers, timeout=25)
+                    response = requests.get(url=url, headers=headers, timeout=60)
                     if response.status_code == 200: break
-                except: sleep(0.1)
+                except Exception as e:
+                    # self.print_logs(f'{e} for {url}, {headers}') 
+                    sleep(0.1)
         except Exception as e:
             if self.DEBUG: print(f'Exception in get_response: {e}')
             self.print_logs(f'Exception in get_response: {e}')
