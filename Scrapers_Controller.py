@@ -1,10 +1,10 @@
 import os
 import sys
-import json
+# import json
 import glob
 import datetime
 from datetime import datetime
-import chromedriver_autoinstaller
+# import chromedriver_autoinstaller
 import pandas as pd
 
 import smtplib
@@ -29,13 +29,13 @@ from modules.files_reader import Files_Reader
 from scrapers.digitalhub import Digitalhub_Scraper
 from scrapers.safilo import Safilo_Scraper
 from scrapers.keringeyewear import Keringeyewear_Scraper
-# from scrapers.rudyproject import Rudyproject_Scraper
+from scrapers.rudyproject import Rudyproject_Scraper
 from scrapers.luxottica import Luxottica_Scraper
 
 from database.digitalhub import Digitalhub_Mongodb
 from database.safilo import Safilo_Mongodb
 from database.keringeyewear import Keringeyewear_Mongodb
-# from database.rudyproject import Rudyproject_Mongodb
+from database.rudyproject import Rudyproject_Mongodb
 from database.luxottica import Luxottica_Mongodb
 
 from shopifycode.shopify_updater import Shopify_Updater
@@ -62,8 +62,8 @@ class Scraping_Controller:
 
             for store in stores:
                 self.store = store
-                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Luxottica']:
-                # if self.store.name in ['Keringeyewear']:
+                # if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Luxottica']:
+                if self.store.name in ['Luxottica']:
                     query_processor.database_name = str(self.store.name).lower()
 
                     self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
@@ -93,15 +93,15 @@ class Scraping_Controller:
                             if self.store.name == 'Digitalhub': Digitalhub_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
                             elif self.store.name == 'Safilo': Safilo_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
                             elif self.store.name == 'Keringeyewear': Keringeyewear_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
-                            elif self.store.name == 'Luxottica': Luxottica_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store, query_processor)
-                        # elif self.store.name == 'Rudyproject': Rudyproject_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
+                            elif self.store.name == 'Luxottica': Luxottica_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
+                        elif self.store.name == 'Rudyproject': Rudyproject_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
 
 
-                        if self.store.name == 'Digitalhub': Digitalhub_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        elif self.store.name == 'Safilo': Safilo_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        elif self.store.name == 'Keringeyewear': Keringeyewear_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        # if self.store.name == 'Digitalhub': Digitalhub_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        # elif self.store.name == 'Safilo': Safilo_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        # elif self.store.name == 'Keringeyewear': Keringeyewear_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                         # elif self.store.name == 'Rudyproject': Rudyproject_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        elif self.store.name == 'Luxottica': Luxottica_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        # elif self.store.name == 'Luxottica': Luxottica_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
 
                         
                     else: print('No brand selected to scrape and update')
@@ -388,22 +388,22 @@ try:
     obj = Scraping_Controller(DEBUG, path)
     obj.main_controller()
 
-    log_files = get_latest_log_files(DEBUG)
+    # log_files = get_latest_log_files(DEBUG)
     
-    obj = Shopify_Controller(DEBUG, path)
-    result_files = obj.update_inventory_controller(log_files)
-    if result_files:
-        file_reader = Files_Reader(DEBUG)
-        json_data = file_reader.read_json_file(obj.config_file)
-        start_time = datetime.now()
-        subject = f'Scraper time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}'
-        # sending log files
-        try: send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], json_data[0]['email']['logs_to'], subject, '', log_files)
-        except Exception as e: print(str(e))
-        # sending result files
-        files = [result_file for result_file in result_files]
-        for results_to in json_data[0]['email']['results_to']:
-            send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], results_to, subject, '', files)
+    # obj = Shopify_Controller(DEBUG, path)
+    # result_files = obj.update_inventory_controller(log_files)
+    # if result_files:
+    #     file_reader = Files_Reader(DEBUG)
+    #     json_data = file_reader.read_json_file(obj.config_file)
+    #     start_time = datetime.now()
+    #     subject = f'Scraper time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}'
+    #     # sending log files
+    #     try: send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], json_data[0]['email']['logs_to'], subject, '', log_files)
+    #     except Exception as e: print(str(e))
+    #     # sending result files
+    #     files = [result_file for result_file in result_files]
+    #     for results_to in json_data[0]['email']['results_to']:
+    #         send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], results_to, subject, '', files)
 except Exception as e:
     if DEBUG: print('Exception: '+str(e))
     else: pass
