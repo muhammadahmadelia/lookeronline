@@ -79,7 +79,8 @@ class Rudyproject_Scraper:
             self.print_logs('Duration: {}\n'.format(end_time - start_time))
 
         except Exception as e:
-            if self.DEBUG: print(f'Exception in scraper controller: {e}')
+            self.print_logs(f'Exception in Rudyproject_Scraper controller: {e}')
+            if self.DEBUG: print(f'Exception in Rudyproject_Scraper controller: {e}')
             else: pass
         finally: 
             self.wait_for_thread_list_to_complete()

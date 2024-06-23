@@ -451,7 +451,7 @@ class Shopify_Processor:
                         sleep(1)
                         counter += 1
                         if counter == 10: 
-                            self.print_logs(f'{response.status_code} found in updating inventory quantity of variant: {inventory_item_id} {json_data}')
+                            self.print_logs(f'{response.status_code} found in updating inventory quantity of variant: {inventory_item_id} {json_data} and response: {response.text}')
                             break
                 except requests.exceptions.ConnectionError: pass
                 except Exception as e: self.print_logs(f'Exception in update_variant_inventory_quantity loop: {e}')

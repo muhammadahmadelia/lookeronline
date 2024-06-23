@@ -15,6 +15,7 @@ class Product:
         self.__shopify_id: str = ''
         self.__metafields: Metafields = Metafields()
         self.__image: str = ''
+        self.__url: str = ''
         self.__images_360: list[str] = []
         self.__variants: list[Variant] = []
         pass
@@ -114,6 +115,14 @@ class Product:
     @image.setter
     def image(self, image: str):
         self.__image = image
+
+    @property
+    def url(self) -> str:
+        return self.__url
+
+    @url.setter
+    def url(self, url: str):
+        self.__url = url
 
     @property
     def images_360(self) -> list[str]:

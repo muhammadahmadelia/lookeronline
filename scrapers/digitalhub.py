@@ -399,7 +399,7 @@ class Digitalhub_Scraper:
     def get_total_products(self) -> int:
         total_products = 0
         try:
-            input_string = str(self.browser.find_element(By.XPATH, '//h3[@class="title-16 uppercase"]').text).strip()
+            input_string = str(self.browser.find_element(By.XPATH, '//h3[contains(@class, "title-16 uppercase")]').text).strip()
             if input_string:
                 match = re.search(r'\((\d+)\)', input_string)
 
@@ -491,6 +491,8 @@ class Digitalhub_Scraper:
                                 frame_codes.append(frame_code)
                                 try:
                                     product = Product()
+
+                                    product.url = product_url
 
                                     product.brand = str(brand.name).strip()
                                     try: product.number = variant_json.get('fields').get('ModelCode__c')
@@ -726,6 +728,7 @@ class Digitalhub_Scraper:
                     'type': product.type,
                     'bridge': product.bridge,
                     'template': product.template,
+                    "url": product.url,
                     'metafields': {
                         'for_who': str(product.metafields.for_who).strip().title(),
                         'lens_material': str(product.metafields.lens_material).strip().title(),

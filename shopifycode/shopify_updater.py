@@ -282,14 +282,19 @@ class Shopify_Updater:
                 update_fields['barcode'] = variant.barcode_or_gtin
                 # if not shopify_processor.update_variant({"variant": {"id": variant.shopify_id, "barcode": variant.barcode_or_gtin}}):
                 #     self.print_logs(f'Failed to update variant barcode of product: {variant.id}')
-    
-            if int(variant.inventory_quantity) != int(shopify_variant['inventory_quantity']):
-                adjusted_qunatity = shopify_processor.get_adjusted_inventory_level(int(variant.inventory_quantity), int(shopify_variant['inventory_quantity']))
-                if variant.inventory_item_id:
-                    if not shopify_processor.update_variant_inventory_quantity(variant.inventory_item_id, adjusted_qunatity):
-                        self.print_logs(f'Failed to update variant inventory quantity of product: {variant.id}')
-                else: self.print_logs(f"inventory_item_id not found for {variant.id} from database")
-            
+
+            if shopify_variant['inventory_management'] and shopify_variant['inventory_management'] == 'shopify':
+                if int(variant.inventory_quantity) != int(shopify_variant['inventory_quantity']):
+                    adjusted_qunatity = shopify_processor.get_adjusted_inventory_level(int(variant.inventory_quantity), int(shopify_variant['inventory_quantity']))
+                    if variant.inventory_item_id:
+                        if not shopify_processor.update_variant_inventory_quantity(variant.inventory_item_id, adjusted_qunatity):
+                            self.print_logs(f'Failed to update variant inventory quantity of product: {variant.id}')
+                    else: self.print_logs(f"inventory_item_id not found for {variant.id} from database")
+            else: update_fields['inventory_management'] = 'shopify'
+
+            if not bool(shopify_variant['taxable']):
+                update_fields['taxable'] = True
+
             if update_fields:
                 update_fields['id'] = variant.shopify_id
                 json_value = {"variant": update_fields}
@@ -358,7 +363,7 @@ class Shopify_Updater:
                 "price": str(variant.listing_price), 
                 "sku": str(variant.sku), 
                 "compare_at_price": str(variant.listing_price),
-                "taxable": 'true',
+                "taxable": True,
                 "barcode": str(variant.barcode_or_gtin),
                 "grams": 500, 
                 "weight": '0.5', 

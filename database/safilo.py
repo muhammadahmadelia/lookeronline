@@ -113,6 +113,7 @@ class Safilo_Mongodb:
                         product.bridge = str(json_d['bridge']).strip()
                         product.template = str(json_d['template']).strip()
                         product.image = str(json_d['image']).strip()
+                        product.url = str(json_d['url']).strip()
                         product.images_360 = json_d['images_360']
 
                         product.metafields.for_who = str(json_d['metafields']['for_who']).strip().title()
@@ -165,6 +166,7 @@ class Safilo_Mongodb:
                 product.type = str(p_json['type']).strip()
                 product.bridge = str(p_json['bridge']).strip()
                 product.template = str(p_json['template']).strip()
+                product.url = str(p_json['url']).strip()
                 product.shopify_id = str(p_json['shopify_id']).strip()
                 product.metafields.for_who = str(p_json['metafields']['for_who']).strip()
                 product.metafields.lens_material = str(p_json['metafields']['lens_material']).strip()
@@ -178,7 +180,7 @@ class Safilo_Mongodb:
                 product.image = str(p_json['image']).strip() if product.image else ''
                 product.images_360 = p_json['images_360'] if p_json['images_360'] else []
 
-                variants: list[variants] = []
+                variants: list[Variant] = []
                 # for v_json in query_processor.get_variants_by_product_id(product.id):
                 for v_json in p_json['variants']:
                     variant = Variant()
@@ -219,6 +221,9 @@ class Safilo_Mongodb:
 
             if scraped_product.image and scraped_product.image != matched_db_product.image:
                 update_values_dict['image'] = scraped_product.image
+
+            if scraped_product.url and scraped_product.url != matched_db_product.url:
+                update_values_dict['url'] = scraped_product.url
 
             if scraped_product.images_360 and len(scraped_product.images_360) != 0 and scraped_product.images_360 != matched_db_product.images_360:
                 update_values_dict['images_360'] = scraped_product.images_360
@@ -296,6 +301,7 @@ class Safilo_Mongodb:
                 'type': product.type,
                 'bridge': product.bridge,
                 'template': product.template,
+                'url': product.url,
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow(),
                 'shopify_id': product.shopify_id,

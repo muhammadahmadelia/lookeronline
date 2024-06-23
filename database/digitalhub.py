@@ -112,6 +112,7 @@ class Digitalhub_Mongodb:
                         product.bridge = str(json_d['bridge']).strip()
                         product.template = str(json_d['template']).strip()
                         product.image = str(json_d['image']).strip()
+                        product.image = str(json_d['url']).strip()
                         product.images_360 = json_d['images_360']
 
                         product.metafields.for_who = str(json_d['metafields']['for_who']).strip().title()
@@ -174,9 +175,10 @@ class Digitalhub_Mongodb:
                 product.metafields.size_bridge_template = str(p_json['metafields']['size-bridge-template']).strip()
                 product.metafields.gtin1 = str(p_json['metafields']['gtin1']).strip()
                 product.image = str(p_json['image']).strip() if product.image else ''
+                product.url = str(p_json['url']).strip() if product.url else ''
                 product.images_360 = p_json['images_360'] if p_json['images_360'] else []
 
-                variants: list[variants] = []
+                variants: list[Variant] = []
                 # for v_json in query_processor.get_variants_by_product_id(product.id):
                 for v_json in p_json['variants']:
                     variant = Variant()
@@ -217,6 +219,9 @@ class Digitalhub_Mongodb:
 
             if scraped_product.image and scraped_product.image != matched_db_product.image:
                 update_values_dict['image'] = scraped_product.image
+
+            if scraped_product.url and scraped_product.url != matched_db_product.url:
+                update_values_dict['url'] = scraped_product.url
 
             if scraped_product.images_360 and len(scraped_product.images_360) != 0 and scraped_product.images_360 != matched_db_product.images_360:
                 update_values_dict['images_360'] = scraped_product.images_360
@@ -294,6 +299,7 @@ class Digitalhub_Mongodb:
                 'type': product.type,
                 'bridge': product.bridge,
                 'template': product.template,
+                'url': product.url,
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow(),
                 'shopify_id': product.shopify_id,

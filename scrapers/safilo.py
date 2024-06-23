@@ -473,6 +473,7 @@ class Safilo_Scraper:
                         frame_and_lens_codes.append({'frame_code': frame_code, 'lens_code': lens_code})
 
                         product = Product()
+                        product.url = product_url
                         product.number = product_number
                         product.name = product_name
                         product.brand = brand_name
@@ -1332,6 +1333,7 @@ class Safilo_Scraper:
                     'type': product.type,
                     'bridge': product.bridge,
                     'template': product.template,
+                    'url': product.url,
                     'metafields': {
                         'for_who': str(product.metafields.for_who).strip().title(),
                         'lens_material': str(product.metafields.lens_material).strip().title(),
