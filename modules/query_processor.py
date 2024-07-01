@@ -110,6 +110,18 @@ class Query_Processor:
         finally: return url
 
     # products
+    # get variant by id
+    def get_product_by_id(self, id: str) -> dict:
+        product: dict =dict()
+        try:
+            if not self.db_client: self.get_db_client()
+            db = self.db_client[self.database_name]
+            product = list(db.products.find_one({'_id': id}))
+        except Exception as e:
+            if self.DEBUG: print(f'Exception in get_product_by_id: {e}')
+            self.print_logs(f'Exception in get_product_by_id: {e}')
+        finally: return product
+        
     # get all products from database against brand_id
     def get_products_by_brand(self, brand_name: str) -> list[dict]:
         products: list[dict] = []
@@ -178,6 +190,18 @@ class Query_Processor:
         finally: return product
 
     # variants
+    # get variant by id
+    def get_variant_by_id(self, id: str) -> dict:
+        variant: dict =dict()
+        try:
+            if not self.db_client: self.get_db_client()
+            db = self.db_client[self.database_name]
+            variant = list(db.variants.find_one({'_id': id}))
+        except Exception as e:
+            if self.DEBUG: print(f'Exception in get_variant_by_id: {e}')
+            self.print_logs(f'Exception in get_variant_by_id: {e}')
+        finally: return variant
+    
     # get all variants from database against product_id
     def get_variants_by_product_id(self, product_id: str) -> list[dict]:
         variants: list[dict] = []

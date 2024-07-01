@@ -331,13 +331,13 @@ class Digitalhub_Scraper:
                         product_number = str(text).strip().split('@')[0].strip()
                         external_id = str(text).strip().replace('@', '').strip().lower()
                     variantId = product_json['variations'][0]['id']
+                    product_url = f'https://my.marcolin.com/s/product/{external_id}/{variantId}?isVariation=true&parentVariation={parentId}&searchType=Model'
 
-                    json_data = {
-                        'product_number': product_number,
-                        'product_url': f'https://my.marcolin.com/s/product/{external_id}/{variantId}?isVariation=true&parentVariation={parentId}&searchType=Model'
-                    }
-                    if json_data not in products:
-                        products.append(json_data)
+                    if not str(product_number).isalpha():
+                        json_data = { 'product_number': product_number, 'product_url': product_url }
+                        if json_data not in products:
+                            products.append(json_data)
+                    else: self.print_logs(f'{product_number} is alpha found for {product_url}')
         except Exception as e:
             if self.DEBUG: print(f'Exception in get_products: {e}')
             self.print_logs((f'Exception in get_products: {e}'))
