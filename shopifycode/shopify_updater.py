@@ -82,7 +82,10 @@ class Shopify_Updater:
                                                 # check variants fields and update those which are not matched
                                                 self.check_product_variant(database_variant, database_product, matched_shopify_variant, shopify_processor)
 
-                                            else: self.print_logs(f'{database_variant.id} variant not found on shopify store')
+                                            else: 
+                                                self.print_logs(f'{database_variant.id} variant not found on shopify store')
+                                                for shopify_variant in matched_shopify_product['variants']:
+                                                    self.print_logs(f"S_V_ID: {shopify_variant.get('id')} | S_V_SKU: {shopify_variant.get('sku')}")
                                         else: 
                                             self.add_new_variant(database_variant, database_product, shopify_processor)
                                     
@@ -99,9 +102,9 @@ class Shopify_Updater:
                                 shopify_processor.get_store_url()
 
 
-                    for shopify_product in shopify_products:
-                        if 'Outlet' not in shopify_product['tags']:
-                            self.print_logs(f'{shopify_product["title"]} not in database')
+                    # for shopify_product in shopify_products:
+                    #     if 'Outlet' not in shopify_product['tags']:
+                    #         self.print_logs(f'{shopify_product["title"]} not in database')
                 else: self.print_logs(f'Failed to get {products_count} products from shopify')
 
                 shopify_processor = Shopify_Processor(self.DEBUG, self.config_file, self.logs_filename)

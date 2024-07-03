@@ -314,7 +314,7 @@ class Query_Processor:
                 product.image = str(p_json['image']).strip() if product.image else ''
                 product.images_360 = p_json['images_360'] if p_json['images_360'] else []
 
-                variants: list[variants] = []
+                variants: list[Variant] = []
                 # for v_json in query_processor.get_variants_by_product_id(product.id):
                 for v_json in p_json['variants']:
                     variant = Variant()
