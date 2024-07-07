@@ -337,7 +337,17 @@ class Digitalhub_Scraper:
                         json_data = { 'product_number': product_number, 'product_url': product_url }
                         if json_data not in products:
                             products.append(json_data)
-                    else: self.print_logs(f'{product_number} is alpha found for {product_url}')
+                    else: 
+                        text = product_json['variations'][0]['fields']['StockKeepingUnit'] if 'StockKeepingUnit' in product_json['variations'][0]['fields'] else product_json['variations'][0]['fields']['ExternalId__c']
+                        if text:
+                            product_number = str(text).strip().split('@')[0].strip()
+                            external_id = str(text).strip().replace('@', '').strip().lower()
+                            if not str(product_number).isalpha():
+                                json_data = { 'product_number': product_number, 'product_url': product_url }
+                                if json_data not in products:
+                                    products.append(json_data)
+                        
+                            else: self.print_logs(f'{product_number} is alpha found for {product_url}')
         except Exception as e:
             if self.DEBUG: print(f'Exception in get_products: {e}')
             self.print_logs((f'Exception in get_products: {e}'))
