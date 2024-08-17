@@ -9,7 +9,7 @@ from models.store import Store
 from models.product import Product
 from models.variant import Variant
 
-class Rudyproject_Mongodb:
+class Derigo_Mongodb:
     def __init__(self, DEBUG: bool, results_foldername: str, logs_filename: str, query_processor: Query_Processor) -> None:
         self.DEBUG: bool = DEBUG
         self.results_foldername = results_foldername
@@ -30,7 +30,7 @@ class Rudyproject_Mongodb:
 
                     # read products of specifc brand and specific type from json file
                     scraped_products = self.read_data_from_json_file(brand.name, product_type)
-                    
+
                     if len(scraped_products) > 0:
                         # get products of specifc brand and type from database
                         db_products = self.get_products(brand.name, product_type)
@@ -75,17 +75,17 @@ class Rudyproject_Mongodb:
                             else: 
                                 # adding new product of this brand and type to the database
                                 self.add_new_product(scraped_product)
-
+                        
                         end_time = datetime.now()
                         print(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
                         print('Duration: {}\n'.format(end_time - start_time))
-                        print()
                         self.print_logs(f'End Time: {end_time.strftime("%A, %d %b %Y %I:%M:%S %p")}')
-                        self.print_logs('Duration: {}\n'.format(end_time - start_time))
+                        self.print_logs('Duration: {}\n\n'.format(end_time - start_time))
+                        # print()
                     else: self.print_logs(f'Failed to read values from {self.results_foldername} for {brand.name} | {product_type}')
         except Exception as e:
-            if self.DEBUG: print(f'Exception in Digitalhub_Mongodb: controller: {e}')
-            self.print_logs(f'Exception in Digitalhub_Mongodb: controller: {e}')
+            if self.DEBUG: print(f'Exception in Derigo_Mongodb: controller: {e}')
+            self.print_logs(f'Exception in Derigo_Mongodb: controller: {e}')
 
     # read latest file from results folder and return products of specific brand name and type
     def read_data_from_json_file(self, brand_name: str, product_type: str) -> list[Product]:
@@ -102,16 +102,17 @@ class Rudyproject_Mongodb:
                 for json_d in json_data:
                     if str(json_d['brand']).strip().lower() == str(brand_name).strip().lower() and str(json_d['type']).strip().lower() == str(product_type).strip().lower():
                         product = Product()
-                        product.id = str(json_d['_id']).strip()
-                        product.number = str(json_d['number']).strip().upper()
+                        product.id = str(json_d['_id']).strip().replace('-', '/')
+                        product.number = str(json_d['number']).strip().upper().replace('-', '/')
                         product.name = str(json_d['name']).strip().title()
-                        product.brand = str(json_d['brand']).strip()
-                        product.frame_code = str(json_d['frame_code']).strip().upper()
-                        product.lens_code = str(json_d['lens_code']).strip().upper()
+                        product.brand = str(brand_name).strip()
+                        product.frame_code = str(json_d['frame_code']).strip().upper().replace('-', '/')
+                        product.lens_code = str(json_d['lens_code']).strip().upper().replace('-', '/')
                         product.type = str(json_d['type']).strip().title()
                         product.bridge = str(json_d['bridge']).strip()
                         product.template = str(json_d['template']).strip()
                         product.image = str(json_d['image']).strip()
+                        product.image = str(json_d['url']).strip()
                         product.images_360 = json_d['images_360']
 
                         product.metafields.for_who = str(json_d['metafields']['for_who']).strip().title()
@@ -127,9 +128,10 @@ class Rudyproject_Mongodb:
                         variants = []
                         for json_variant in json_d['variants']:
                             variant = Variant()
-                            variant.id = str(json_variant['_id']).strip()
-                            variant.product_id = str(json_variant['product_id']).strip()
-                            variant.sku = str(json_variant['sku']).strip().upper()
+                            variant.id = str(json_variant['_id']).strip().replace('-', '/')
+                            variant.product_id = str(json_variant['product_id']).strip().replace('-', '/')
+                            variant.title = str(json_variant['title']).strip()
+                            variant.sku = str(json_variant['sku']).strip().upper().replace('-', '/')
                             variant.inventory_quantity = int(json_variant['inventory_quantity'])
                             variant.found_status = int(json_variant['found_status'])
                             variant.wholesale_price = float(json_variant['wholesale_price'])
@@ -173,14 +175,16 @@ class Rudyproject_Mongodb:
                 product.metafields.size_bridge_template = str(p_json['metafields']['size-bridge-template']).strip()
                 product.metafields.gtin1 = str(p_json['metafields']['gtin1']).strip()
                 product.image = str(p_json['image']).strip() if product.image else ''
+                product.url = str(p_json['url']).strip() if product.url else ''
                 product.images_360 = p_json['images_360'] if p_json['images_360'] else []
 
-                variants: list[variants] = []
+                variants: list[Variant] = []
                 # for v_json in query_processor.get_variants_by_product_id(product.id):
                 for v_json in p_json['variants']:
                     variant = Variant()
                     variant.id = str(v_json['_id']).strip()
                     variant.product_id = str(v_json['product_id']).strip()
+                    variant.title = str(v_json['title']).strip()
                     variant.sku = str(v_json['sku']).strip()
                     variant.inventory_quantity = int(v_json['inventory_quantity'])
                     variant.found_status = int(v_json['found_status'])
@@ -215,6 +219,9 @@ class Rudyproject_Mongodb:
 
             if scraped_product.image and scraped_product.image != matched_db_product.image:
                 update_values_dict['image'] = scraped_product.image
+
+            if scraped_product.url and scraped_product.url != matched_db_product.url:
+                update_values_dict['url'] = scraped_product.url
 
             if scraped_product.images_360 and len(scraped_product.images_360) != 0 and scraped_product.images_360 != matched_db_product.images_360:
                 update_values_dict['images_360'] = scraped_product.images_360
@@ -292,6 +299,7 @@ class Rudyproject_Mongodb:
                 'type': product.type,
                 'bridge': product.bridge,
                 'template': product.template,
+                'url': product.url,
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow(),
                 'shopify_id': product.shopify_id,
@@ -327,6 +335,7 @@ class Rudyproject_Mongodb:
             json_variant = {
                 '_id': variant.id,
                 'product_id': product_id,
+                'title': variant.title,
                 'sku': variant.sku,
                 'inventory_quantity': variant.inventory_quantity,
                 'found_status': variant.found_status,

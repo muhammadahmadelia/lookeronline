@@ -18,7 +18,7 @@ from models.product import Product
 from models.variant import Variant
 
 from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.chrome import ChromeDriverManager
 import urllib.parse
 from furl import furl
 
@@ -46,7 +46,7 @@ class myScrapingThread(threading.Thread):
 
 
 class Digitalhub_Scraper:
-    def __init__(self, DEBUG: bool, result_filename: str, logs_filename: str) -> None:
+    def __init__(self, DEBUG: bool, result_filename: str, logs_filename: str, chrome_path: str) -> None:
         self.DEBUG = DEBUG
         self.data = []
         self.result_filename = result_filename
@@ -57,7 +57,7 @@ class Digitalhub_Scraper:
         self.chrome_options.add_argument('--disable-infobars')
         self.chrome_options.add_argument("--start-maximized")
         self.chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])
-        self.browser = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=self.chrome_options)
+        self.browser = webdriver.Chrome(service=ChromeService(chrome_path), options=self.chrome_options)
         self.auth_token: str = ''
         self.fwuid: str = ''
         pass

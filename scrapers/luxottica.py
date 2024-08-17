@@ -20,7 +20,7 @@ from models.variant import Variant
 from modules.query_processor import Query_Processor
 
 from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
+# from webdriver_manager.chrome import ChromeDriverManager
 
 class myScrapingThread(threading.Thread):
     def __init__(self, threadID: int, name: str, obj, varinat: dict, brand: Brand, glasses_type: str, headers: dict, tokenValue: str) -> None:
@@ -45,7 +45,7 @@ class myScrapingThread(threading.Thread):
 
 
 class Luxottica_Scraper:
-    def __init__(self, DEBUG: bool, result_filename: str, logs_filename: str) -> None:
+    def __init__(self, DEBUG: bool, result_filename: str, logs_filename: str, chrome_path: str) -> None:
         self.DEBUG = DEBUG
         self.data = []
         self.result_filename = result_filename
@@ -60,7 +60,7 @@ class Luxottica_Scraper:
         # self.args = ["hide_console", ]
         # self.browser = webdriver.Chrome(options=self.chrome_options, service_args=self.args)
         # self.browser = webdriver.Chrome(options=self.chrome_options)
-        self.browser = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=self.chrome_options)
+        self.browser = webdriver.Chrome(service=ChromeService(chrome_path), options=self.chrome_options)
         pass
 
     def controller(self, store: Store) -> None:

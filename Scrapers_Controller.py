@@ -29,16 +29,18 @@ from modules.files_reader import Files_Reader
 from scrapers.digitalhub import Digitalhub_Scraper
 from scrapers.safilo import Safilo_Scraper
 from scrapers.keringeyewear import Keringeyewear_Scraper
-from scrapers.rudyproject import Rudyproject_Scraper
 from scrapers.luxottica import Luxottica_Scraper
+from scrapers.derigo import DeRigo_Scraper
 
 from database.digitalhub import Digitalhub_Mongodb
+from database.derigo import Derigo_Mongodb
 from database.safilo import Safilo_Mongodb
 from database.keringeyewear import Keringeyewear_Mongodb
-from database.rudyproject import Rudyproject_Mongodb
 from database.luxottica import Luxottica_Mongodb
 
 from shopifycode.shopify_updater import Shopify_Updater
+
+from webdriver_manager.chrome import ChromeDriverManager
 
 class Scraping_Controller:
     def __init__(self, DEBUG: bool, path: str) -> None:
@@ -51,6 +53,7 @@ class Scraping_Controller:
         self.result_filename: str = ''
         self.logs_filename: str = ''
         self.log_files: list[str] = []
+        self.chrome_path: str = ''
         pass
     
     def main_controller(self) -> None:
@@ -62,8 +65,8 @@ class Scraping_Controller:
 
             for store in stores:
                 self.store = store
-                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo']:
-                # if self.store.name in ['Safilo']:'Luxottica', 'Rudyproject'
+                # if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Derigo']:
+                if self.store.name in ['Derigo']:# 'Derigo' 'Luxottica'
                     query_processor.database_name = str(self.store.name).lower()
 
                     self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
@@ -87,21 +90,28 @@ class Scraping_Controller:
                         print('\n')
                         if self.logs_filename not in self.log_files: self.log_files.append(self.logs_filename)
 
-                        if self.store.name in ['Digitalhub', 'Safilo', 'Keringeyewear', 'Luxottica']:
+                        # if self.store.name in ['Digitalhub', 'Safilo', 'Keringeyewear', 'Luxottica', 'Derigo']:
                             # download chromedriver.exe with same version and get its path
                             # chromedriver_autoinstaller.install(self.path)
-                            if self.store.name == 'Digitalhub': Digitalhub_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
-                            elif self.store.name == 'Safilo': Safilo_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
-                            elif self.store.name == 'Keringeyewear': Keringeyewear_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
-                            elif self.store.name == 'Luxottica': Luxottica_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
-                        elif self.store.name == 'Rudyproject': Rudyproject_Scraper(self.DEBUG, self.result_filename, self.logs_filename).controller(self.store)
+
+                        if not self.chrome_path:
+                            self.chrome_path = ChromeDriverManager().install()
+                            if 'chromedriver.exe' not in self.chrome_path:
+                                self.chrome_path = str(self.chrome_path).split('/')[0].strip()
+                                self.chrome_path = f'{self.chrome_path}\\chromedriver.exe'
+
+                        if self.store.name == 'Digitalhub': Digitalhub_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
+                        elif self.store.name == 'Safilo': Safilo_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
+                        elif self.store.name == 'Keringeyewear': Keringeyewear_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
+                        elif self.store.name == 'Luxottica': Luxottica_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
+                        elif self.store.name == 'Derigo': DeRigo_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
 
 
-                        # if self.store.name == 'Digitalhub': Digitalhub_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        # elif self.store.name == 'Safilo': Safilo_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        # elif self.store.name == 'Keringeyewear': Keringeyewear_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        # elif self.store.name == 'Rudyproject': Rudyproject_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
-                        # elif self.store.name == 'Luxottica': Luxottica_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        if self.store.name == 'Digitalhub': Digitalhub_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        elif self.store.name == 'Safilo': Safilo_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        elif self.store.name == 'Keringeyewear': Keringeyewear_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        elif self.store.name == 'Derigo': Derigo_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
+                        elif self.store.name == 'Luxottica': Luxottica_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
 
                         
                     else: print('No brand selected to scrape and update')
@@ -378,6 +388,7 @@ def get_latest_log_files(DEBUG: bool) -> list[str]:
         if DEBUG: print(f'Exception in get_latest_log_files: {e}')
     finally: return log_files
 
+
 DEBUG = True
 try:
     pathofpyfolder = os.path.realpath(sys.argv[0])
@@ -385,6 +396,7 @@ try:
     path = pathofpyfolder.replace(pathofpyfolder.split('\\')[-1], '')
     
     if '.exe' in pathofpyfolder.split('\\')[-1]: DEBUG = False
+    
     obj = Scraping_Controller(DEBUG, path)
     obj.main_controller()
 
