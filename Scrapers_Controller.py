@@ -65,8 +65,8 @@ class Scraping_Controller:
 
             for store in stores:
                 self.store = store
-                # if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Derigo']:
-                if self.store.name in ['Derigo']:# 'Derigo' 'Luxottica'
+                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Derigo']:
+                # if self.store.name in ['Derigo']:# 'Derigo' 'Luxottica'
                     query_processor.database_name = str(self.store.name).lower()
 
                     self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
@@ -105,8 +105,7 @@ class Scraping_Controller:
                         elif self.store.name == 'Keringeyewear': Keringeyewear_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
                         elif self.store.name == 'Luxottica': Luxottica_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
                         elif self.store.name == 'Derigo': DeRigo_Scraper(self.DEBUG, self.result_filename, self.logs_filename, self.chrome_path).controller(self.store)
-
-
+                        
                         if self.store.name == 'Digitalhub': Digitalhub_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                         elif self.store.name == 'Safilo': Safilo_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
                         elif self.store.name == 'Keringeyewear': Keringeyewear_Mongodb(self.DEBUG, self.results_foldername, self.logs_filename, query_processor).controller(self.store)
@@ -211,7 +210,7 @@ class Shopify_Controller:
             for store in stores:
                 self.store = store
                 if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo']:
-                # if self.store.name in ['Digitalhub']:Luxottica
+                # if self.store.name in ['Derigo']:#Luxottica
                     query_processor.database_name = str(self.store.name).lower()
                     # self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
                     

@@ -364,7 +364,11 @@ class DeRigo_Scraper:
                         variant = Variant()
                         try: variant.title = str(dimensions_and_availabilities.xpath('.//img[contains(@src, "LENTE")]/following-sibling::span/text()')[0]).strip()
                         except: pass
-                        try: variant.sku = f'{product.number} {product.frame_code} {variant.title}'
+                        try: 
+                            if not product.lens_code: variant.sku = f'{product.number} {product.frame_code} {variant.title}'
+                            else: variant.sku = f'{product.number} {product.frame_code} {product.lens_code} {variant.title}'
+                            if variant.sku:
+                                variant.sku = str(variant.sku).strip().replace('  ', ' ')
                         except: pass
                         if product_price: variant.listing_price = product_price
                         if '.' in variant.listing_price: variant.listing_price = str(variant.listing_price).replace('.', '')
@@ -391,7 +395,7 @@ class DeRigo_Scraper:
 
                     for variant in product.variants:
                         if variant.size: product.metafields.size_bridge_template += f'{variant.size}, '
-                        if variant.barcode_or_gtin: product.metafields.gtin1 += f'{variant.barcode_or_gtin}'
+                        if variant.barcode_or_gtin: product.metafields.gtin1 += f'{variant.barcode_or_gtin}, '
                     
                     product.metafields.for_who = 'Unisex'
                     
@@ -427,7 +431,7 @@ class DeRigo_Scraper:
                 _id = ''
                 if product.lens_code: _id = f"{str(product.number).strip().upper()}_{str(product.frame_code).strip().upper()}_{str(product.lens_code).strip().upper()}"
                 else: _id = f"{str(product.number).strip().upper()}_{str(product.frame_code).strip().upper()}"
-
+                if _id[0] == '_': _id = _id[1:]
                 json_varinats = []
                 for variant in product.variants:
                     json_varinat = {

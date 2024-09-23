@@ -37,6 +37,7 @@ class Shopify_Updater:
             new_products_counter = 0
 
             for brand in self.store.brands:
+                # if brand.name == 'Police': # this line to replace
                 template_suffix = ''
                 print(f'\nBrand: {brand.name}')
                 self.print_logs(f'\nBrand: {brand.name}')
@@ -547,7 +548,9 @@ class Shopify_Updater:
                     # adding 360 images to product
                     self.print_logs(f'Adding product images for {product.id}')
                     self.utils.add_product_360_images(self.store.name, product, image_description, shopify_processor)
-                elif product.image: self.utils.add_product_image(self.store.name ,product, image_description, shopify_processor)
+                elif product.image: 
+                    print('Adding product image')
+                    self.utils.add_product_image(self.store.name ,product, image_description, shopify_processor)
         except Exception as e: 
             self.print_logs(f'Exception in set_product_images: {e}')
             if self.DEBUG: print(f'Exception in set_product_images: {e}')

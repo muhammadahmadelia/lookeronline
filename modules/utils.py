@@ -24,7 +24,7 @@ class Utils:
             if store_name == 'Digitalhub': template_folder_path = 'templates/Digitalhub/'
             elif store_name == 'Safilo': template_folder_path = 'templates/Safilo/'
             elif store_name == 'Keringeyewear': template_folder_path = 'templates/Keringeyewear/'
-            elif store_name == 'Rudyproject': template_folder_path = 'templates/Rudyproject/'
+            elif store_name == 'Derigo': template_folder_path = 'templates/Derigo/'
             elif store_name == 'Luxottica': template_folder_path = 'templates/Luxottica/'
         except Exception as e:
             self.print_logs(f'Exception in get_templates_folder_path: {e}')
@@ -367,18 +367,11 @@ class Utils:
                     if image_filename:
                         json_value = {"image": {"position": index + 1, "src": image_360_url, "filename": image_filename, "alt": image_description}}
                         shopify_processor.set_product_image(product.shopify_id, json_value)
-            elif str(store_name).strip().title() == 'Keringeyewear':
+            elif str(store_name).strip().title() in ['Keringeyewear', 'Derigo']:
                 for index, image_360_url in enumerate(product.images_360):
                     image_filename = f"{str(image_description).strip().replace(' ', '_')}.png"
                     json_value = {"image": {"position": index + 1, "src": image_360_url, "filename": image_filename, "alt": image_description}}
                     shopify_processor.set_product_image(product.shopify_id, json_value)
-            elif str(store_name).strip().title() == 'Rudyproject':
-                img_360_urls = product.images_360 
-                if len(img_360_urls) > 1:
-                    matched_index = next((i for i, img_360_url in enumerate(img_360_urls) if '_10.' in img_360_url), None)
-                    if matched_index:
-                        front_image = img_360_urls.pop(matched_index)
-                        img_360_urls.insert(0, front_image)
                 
                 for index, image_360_url in enumerate(img_360_urls):
                     image_filename = ''
@@ -473,8 +466,7 @@ class Utils:
             if str(store_name).strip().title() == 'Digitalhub': print('Digitalhub')
             elif str(store_name).strip().title() == 'Safilo': print('Safilo')
             elif str(store_name).strip().title() == 'Keringeyewear': print('Keringeyewear')
-            elif str(store_name).strip().title() == 'Rudyproject': print('Rudyproject')
-            elif str(store_name).strip().title() == 'Luxottica':
+            elif str(store_name).strip().title() in ['Luxottica', 'Derigo']:
                 image = str(product.image).strip()
                 if '?impolicy=' in image: image = str(image).split('?impolicy=')[0].strip()
                 

@@ -311,7 +311,7 @@ class Query_Processor:
                 product.metafields.frame_color = str(p_json['metafields']['frame_color']).strip()
                 product.metafields.size_bridge_template = str(p_json['metafields']['size-bridge-template']).strip()
                 product.metafields.gtin1 = str(p_json['metafields']['gtin1']).strip()
-                product.image = str(p_json['image']).strip() if product.image else ''
+                product.image = str(p_json['image']).strip() if p_json['image'] else ''
                 product.images_360 = p_json['images_360'] if p_json['images_360'] else []
 
                 variants: list[Variant] = []
