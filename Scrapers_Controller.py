@@ -66,7 +66,7 @@ class Scraping_Controller:
             for store in stores:
                 self.store = store
                 if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Derigo']:
-                # if self.store.name in ['Derigo']:# 'Derigo' 'Luxottica'
+                # if self.store.name in ['Safilo']:# 'Derigo' 'Luxottica'
                     query_processor.database_name = str(self.store.name).lower()
 
                     self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
@@ -209,7 +209,7 @@ class Shopify_Controller:
 
             for store in stores:
                 self.store = store
-                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo']:
+                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Derigo']:
                 # if self.store.name in ['Derigo']:#Luxottica
                     query_processor.database_name = str(self.store.name).lower()
                     # self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'

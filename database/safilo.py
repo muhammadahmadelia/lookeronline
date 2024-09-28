@@ -166,7 +166,7 @@ class Safilo_Mongodb:
                 product.type = str(p_json['type']).strip()
                 product.bridge = str(p_json['bridge']).strip()
                 product.template = str(p_json['template']).strip()
-                product.url = str(p_json['url']).strip()
+                product.url = str(p_json['url']).strip() if 'url' in p_json else ''
                 product.shopify_id = str(p_json['shopify_id']).strip()
                 product.metafields.for_who = str(p_json['metafields']['for_who']).strip()
                 product.metafields.lens_material = str(p_json['metafields']['lens_material']).strip()
