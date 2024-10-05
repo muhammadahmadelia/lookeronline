@@ -373,13 +373,13 @@ class Utils:
                     json_value = {"image": {"position": index + 1, "src": image_360_url, "filename": image_filename, "alt": image_description}}
                     shopify_processor.set_product_image(product.shopify_id, json_value)
                 
-                for index, image_360_url in enumerate(img_360_urls):
-                    image_filename = ''
-                    image_filename = str(image_360_url).strip().split('/')[-1].strip()
-                    if image_filename:
-                        json_value = {"image": {"position": index + 1, "src": image_360_url, "filename": image_filename, "alt": image_description}}
-                        if not shopify_processor.set_product_image(product.shopify_id, json_value):
-                            self.print_logs(f'Failed to upload image {image_360_url} for {product.id}')
+                # for index, image_360_url in enumerate(img_360_urls):
+                #     image_filename = ''
+                #     image_filename = str(image_360_url).strip().split('/')[-1].strip()
+                #     if image_filename:
+                #         json_value = {"image": {"position": index + 1, "src": image_360_url, "filename": image_filename, "alt": image_description}}
+                #         if not shopify_processor.set_product_image(product.shopify_id, json_value):
+                #             self.print_logs(f'Failed to upload image {image_360_url} for {product.id}')
             elif str(store_name).strip().title() == 'Luxottica':
                 for index, image_360_url in enumerate(product.images_360):
                     image_360_url = str(image_360_url).strip()
