@@ -260,14 +260,16 @@ class Shopify_Updater:
         try:
             update_fields = {}                
             if str(variant.title).strip():
-                if len(product.variants) == 1:
-                    if 'Default Title' != shopify_variant['title']:
-                        update_fields['option1'] = 'Default Title'
-                        # if not shopify_processor.update_variant({"variant": {"id": variant.shopify_id, "option1": "Default Title"}}):
-                        #     self.print_logs(f'Failed to update variant title for: {variant.id}')
-                else:    
-                    if variant.title != shopify_variant['title']:
-                        update_fields['option1'] = variant.title
+                if variant.title != shopify_variant['title']:
+                    update_fields['option1'] = variant.title
+                # if len(product.variants) == 1:
+                #     if 'Default Title' != shopify_variant['title']:
+                #         update_fields['option1'] = 'Default Title'
+                #         # if not shopify_processor.update_variant({"variant": {"id": variant.shopify_id, "option1": "Default Title"}}):
+                #         #     self.print_logs(f'Failed to update variant title for: {variant.id}')
+                # else:    
+                #     if variant.title != shopify_variant['title']:
+                #         update_fields['option1'] = variant.title
                         # if not shopify_processor.update_variant({"variant": {"id": variant.shopify_id, "option1": variant.title}}):
                         #     self.print_logs(f'Failed to update variant title for: {variant.id}')
 
@@ -357,13 +359,13 @@ class Shopify_Updater:
     def get_new_variant_json(self, no_of_variants: int, variant: Variant) -> dict:
         new_variant_json = {}
         try:
-            title = ''
-            if no_of_variants == 1: title = 'Default Title'
-            else: title = variant.title
+            # title = ''
+            # if no_of_variants == 1: title = 'Default Title'
+            # else: title = variant.title
             if str(variant.listing_price).strip() == '': variant.listing_price = '0.00'
             
             new_variant_json = {
-                "option1": str(title), 
+                "option1": str(variant.title), 
                 "price": str(variant.listing_price), 
                 "sku": str(variant.sku), 
                 "compare_at_price": str(variant.listing_price),
