@@ -126,6 +126,7 @@ class Keringeyewear_Scraper:
                                 scraped_products += 1
                                 product_number = product_data[0]
                                 product_url = product_data[1]
+                                
                                 self.create_thread(brand, glasses_type, product_number, product_url, headers)
                                 sleep(0.5)
                                 if self.thread_counter >= 10: 
@@ -417,8 +418,8 @@ class Keringeyewear_Scraper:
 
             while len(products_data) < int(total_products):
                 try:
-                    if glasses_type == 'Sunglasses': params = { 'q': ':relevance:type:Style:articleType:Sun:Style:Sku', 'type': 'Style', 'page': page, 'pageSize': 8 }
-                    elif glasses_type == 'Eyeglasses': params = { 'q': ':relevance:type:Style:articleType:Optical:Style:Sku', 'type': 'Style', 'page': page, 'pageSize': 8 }
+                    if glasses_type == 'Sunglasses': params = { 'q': ':relevance:articleType:Sun:type:Style:brandCode:', 'type': 'Style', 'page': page, 'pageSize': 8 }
+                    elif glasses_type == 'Eyeglasses': params = { 'q': ':relevance:articleType:Sun:type:Style:brandCode:', 'type': 'Style', 'page': page, 'pageSize': 8 }
 
                     response = requests.get(url=url, params=params, headers=headers)
                     if response.status_code == 200:
