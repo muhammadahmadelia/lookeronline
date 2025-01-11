@@ -415,13 +415,17 @@ class Keringeyewear_Scraper:
             
             page = 1
             params = {}
+            total_pages = int((int(total_products)-20) / 8) + 1
+            if total_pages < float(int(total_products) / 8): total_pages += 1
 
-            while len(products_data) < int(total_products):
+            # while len(products_data) < int(total_products):
+            while len(products_data) < int(total_products) and page <= total_pages:
                 try:
                     if glasses_type == 'Sunglasses': params = { 'q': ':relevance:articleType:Sun:type:Style:brandCode:', 'type': 'Style', 'page': page, 'pageSize': 8 }
-                    elif glasses_type == 'Eyeglasses': params = { 'q': ':relevance:articleType:Sun:type:Style:brandCode:', 'type': 'Style', 'page': page, 'pageSize': 8 }
+                    elif glasses_type == 'Eyeglasses': params = { 'q': ':relevance:articleType:Optical:type:Style:brandCode:', 'type': 'Style', 'page': page, 'pageSize': 8 }
 
                     response = requests.get(url=url, params=params, headers=headers)
+                    self.print_logs(f'{url}: url, page: {page}, total_pages: {total_pages}, status_code: {response.status_code}, total_products: {total_products}, scraped_products: {len(products_data)}')
                     if response.status_code == 200:
                         page += 1
                         soup = BeautifulSoup(response.text, 'lxml')
@@ -437,6 +441,8 @@ class Keringeyewear_Scraper:
                 except Exception as e:
                     if self.DEBUG: print(f'Exception in get_products_on_other_pages loop: {e}')
                     self.print_logs(f'Exception in get_products_on_other_pages loop: {e}')
+            self.print_logs(f'{url}: url, page: {page}, total_pages: {total_pages}, total_products: {total_products}, scraped_products: {len(products_data)}')
+
         except Exception as e:
             if self.DEBUG: print(f'Exception in get_products_on_other_pages: {e}')
             self.print_logs(f'Exception in get_products_on_other_pages: {e}')

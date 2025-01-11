@@ -112,7 +112,7 @@ class Digitalhub_Mongodb:
                         product.bridge = str(json_d['bridge']).strip()
                         product.template = str(json_d['template']).strip()
                         product.image = str(json_d['image']).strip()
-                        product.image = str(json_d['url']).strip()
+                        product.url = str(json_d['url']).strip()
                         product.images_360 = json_d['images_360']
 
                         product.metafields.for_who = str(json_d['metafields']['for_who']).strip().title()

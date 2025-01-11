@@ -303,7 +303,7 @@ class DeRigo_Scraper:
             while page_products == 12:
                 page_no += 1
                 next_page_url = f'https://my.derigo.com/forsales2_new/elencoProdotti.php?pag={page_no}'
-                print(next_page_url, page_products)
+                # print(next_page_url, page_products)
                 headers = self.get_headers('https://my.derigo.com/forsales2_new/index.php')
                 response = self.get_response(next_page_url, headers)
                 
@@ -360,7 +360,7 @@ class DeRigo_Scraper:
                     try: product.metafields.frame_color = str(frame_code_and_color).split('-')[-1].strip()
                     except: pass
 
-                    for v_index, dimensions_and_availabilities in enumerate(doc_tree.xpath(f'//div[contains(@class, "color-code-list itemModello")]/ul/li[contains(@id, "rigaInput_{p_index}")]/div[@class="infoRow row"]')):
+                    for v_index, dimensions_and_availabilities in enumerate(doc_tree.xpath(f'//div[contains(@class, "color-code-list itemModello")]/ul/li[contains(@id, "rigaInput_{p_index}_")]/div[@class="infoRow row"]')):
                         variant = Variant()
                         try: variant.title = str(dimensions_and_availabilities.xpath('.//img[contains(@src, "LENTE")]/following-sibling::span/text()')[0]).strip()
                         except: pass
