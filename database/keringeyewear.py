@@ -250,7 +250,9 @@ class Keringeyewear_Mongodb:
             if scraped_product.metafields.gtin1 and scraped_product.metafields.gtin1 != matched_db_product.metafields.gtin1:
                 update_values_dict['metafields.gtin1'] = scraped_product.metafields.gtin1
 
-            if update_values_dict: self.query_processor.update_product({"_id": matched_db_product.id}, {"$set": update_values_dict})
+            if update_values_dict: 
+                update_values_dict['updated_at'] = datetime.utcnow()
+                self.query_processor.update_product({"_id": matched_db_product.id}, {"$set": update_values_dict})
         except Exception as e:
             if self.DEBUG: print(f'Exception in check_product_feilds: {e}')
             self.print_logs(f'Exception in check_product_feilds: {e} {matched_db_product}')
@@ -280,7 +282,9 @@ class Keringeyewear_Mongodb:
             if scraped_variant.size and scraped_variant.size != matched_db_variant.size: 
                 update_values_dict['size'] = scraped_variant.size
 
-            if update_values_dict: self.query_processor.update_variant({"_id": matched_db_variant.id}, {"$set": update_values_dict})
+            if update_values_dict: 
+                update_values_dict['updated_at'] = datetime.now()
+                self.query_processor.update_variant({"_id": matched_db_variant.id}, {"$set": update_values_dict})
         except Exception as e:
             if self.DEBUG: print(f'Exception in check_variant_fields: {e}')
             self.print_logs(f'Exception in check_variant_fields: {e}')
