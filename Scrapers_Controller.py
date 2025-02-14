@@ -65,8 +65,8 @@ class Scraping_Controller:
 
             for store in stores:
                 self.store = store
-                if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Derigo']:
-                # if self.store.name in ['Keringeyewear']:# 'Derigo' 'Luxottica'
+                # if self.store.name in ['Digitalhub', 'Keringeyewear', 'Safilo', 'Derigo']:
+                if self.store.name in ['Digitalhub']:# 'Derigo' 'Luxottica'
                     query_processor.database_name = str(self.store.name).lower()
 
                     self.logs_folder_path = f'{self.path}/Logs/{self.store.name}/'
@@ -80,12 +80,12 @@ class Scraping_Controller:
                     self.store.brands = query_processor.get_brands()
 
                     if self.store.brands:
-                        # new_list = []
-                        # for brand in self.store.brands:
-                        #     if brand.name == 'Porsche Design':
-                        #         new_list.append(brand)
-                        #         break
-                        # self.store.brands = new_list
+                        new_list = []
+                        for brand in self.store.brands:
+                            if brand.name == 'Tom Ford':
+                                new_list.append(brand)
+                                break
+                        self.store.brands = new_list
 
                         self.results_foldername = f'{self.path}/scraped_data/{self.store.name}/'
                         
@@ -406,22 +406,22 @@ try:
     obj = Scraping_Controller(DEBUG, path)
     obj.main_controller()
 
-    log_files = get_latest_log_files(DEBUG)
+    # log_files = get_latest_log_files(DEBUG)
     
-    obj = Shopify_Controller(DEBUG, path)
-    result_files = obj.update_inventory_controller(log_files)
-    if result_files:
-        file_reader = Files_Reader(DEBUG)
-        json_data = file_reader.read_json_file(obj.config_file)
-        start_time = datetime.now()
-        subject = f'Scraper time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}'
-        # sending log files
-        try: send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], json_data[0]['email']['logs_to'], subject, '', log_files)
-        except Exception as e: print(str(e))
-        # sending result files
-        files = [result_file for result_file in result_files]
-        for results_to in json_data[0]['email']['results_to']:
-            send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], results_to, subject, '', files)
+    # obj = Shopify_Controller(DEBUG, path)
+    # result_files = obj.update_inventory_controller(log_files)
+    # if result_files:
+    #     file_reader = Files_Reader(DEBUG)
+    #     json_data = file_reader.read_json_file(obj.config_file)
+    #     start_time = datetime.now()
+    #     subject = f'Scraper time: {start_time.strftime("%A, %d %b %Y %I:%M:%S %p")}'
+    #     # sending log files
+    #     try: send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], json_data[0]['email']['logs_to'], subject, '', log_files)
+    #     except Exception as e: print(str(e))
+    #     # sending result files
+    #     files = [result_file for result_file in result_files]
+    #     for results_to in json_data[0]['email']['results_to']:
+    #         send_mail(json_data[0]['email']['from'], json_data[0]['email']['pass'], results_to, subject, '', files)
 except Exception as e:
     if DEBUG: print('Exception: '+str(e))
     else: pass

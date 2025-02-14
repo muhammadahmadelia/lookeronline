@@ -16,6 +16,7 @@ class Product:
         self.__metafields: Metafields = Metafields()
         self.__image: str = ''
         self.__url: str = ''
+        self.__tags: list[str] = []
         self.__images_360: list[str] = []
         self.__variants: list[Variant] = []
         pass
@@ -131,6 +132,14 @@ class Product:
     @images_360.setter
     def images_360(self, images_360: list[str]):
         self.__images_360 = images_360
+
+    @property
+    def tags(self) -> list[str]:
+        return self.__tags
+
+    @tags.setter
+    def tags(self, tags: list[str]):
+        self.__tags = tags
 
     @property
     def variants(self) -> list[Variant]:

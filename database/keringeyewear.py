@@ -103,41 +103,43 @@ class Keringeyewear_Mongodb:
                     if str(json_d['brand']).strip().lower() == str(brand_name).strip().lower() and str(json_d['type']).strip().lower() == str(product_type).strip().lower():
                         product = Product()
                         product.id = str(json_d['_id']).strip().replace('-', '/')
-                        product.number = str(json_d['number']).strip().upper()
-                        product.name = str(json_d['name']).strip().upper()
+                        product.number = str(json_d['number']).strip().upper() if 'number' in json_d else ''
+                        product.name = str(json_d['name']).strip().upper() if 'name' in json_d else ''
                         # product.brand = str(json_d['brand']).strip()
                         product.brand = brand_name
-                        product.frame_code = str(json_d['frame_code']).strip().upper().replace('-', '/')
-                        product.lens_code = str(json_d['lens_code']).strip().upper().replace('-', '/')
-                        product.type = str(json_d['type']).strip().title()
-                        product.bridge = str(json_d['bridge']).strip()
-                        product.template = str(json_d['template']).strip()
-                        product.image = str(json_d['image']).strip()
-                        product.images_360 = json_d['images_360']
+                        product.frame_code = str(json_d['frame_code']).strip().upper().replace('-', '/') if 'frame_code' in json_d else ''
+                        product.lens_code = str(json_d['lens_code']).strip().upper().replace('-', '/') if 'lens_code' in json_d else ''
+                        product.type = str(json_d['type']).strip().title() if 'type' in json_d else ''
+                        product.bridge = str(json_d['bridge']).strip() if 'bridge' in json_d else ''
+                        product.template = str(json_d['template']).strip() if 'template' in json_d else ''
+                        product.image = str(json_d['image']).strip() if 'image' in json_d else ''
+                        product.tags = json_d['tags'] if 'tags' in json_d else []
+                        product.images_360 = json_d['images_360'] if 'images_360' in json_d else []
 
-                        product.metafields.for_who = str(json_d['metafields']['for_who']).strip().title()
-                        product.metafields.lens_material = str(json_d['metafields']['lens_material']).strip().title()
-                        product.metafields.lens_technology = str(json_d['metafields']['lens_technology']).strip().title()
-                        product.metafields.lens_color = str(json_d['metafields']['lens_color']).strip().title()
-                        product.metafields.frame_shape = str(json_d['metafields']['frame_shape']).strip().title()
-                        product.metafields.frame_material = str(json_d['metafields']['frame_material']).strip().title()
-                        product.metafields.frame_color = str(json_d['metafields']['frame_color']).strip().title()
-                        product.metafields.size_bridge_template = str(json_d['metafields']['size-bridge-template']).strip()
-                        product.metafields.gtin1 = str(json_d['metafields']['gtin1']).strip()
+                        if 'metafields' in json_d:
+                            product.metafields.for_who = str(json_d['metafields']['for_who']).strip().title() if 'for_who' in json_d['metafields'] else ''
+                            product.metafields.lens_material = str(json_d['metafields']['lens_material']).strip().title() if 'lens_material' in json_d['metafields'] else ''
+                            product.metafields.lens_technology = str(json_d['metafields']['lens_technology']).strip().title() if 'lens_technology' in json_d['metafields'] else ''
+                            product.metafields.lens_color = str(json_d['metafields']['lens_color']).strip().title() if 'lens_color' in json_d['metafields'] else ''
+                            product.metafields.frame_shape = str(json_d['metafields']['frame_shape']).strip().title() if 'frame_shape' in json_d['metafields'] else ''
+                            product.metafields.frame_material = str(json_d['metafields']['frame_material']).strip().title() if 'frame_material' in json_d['metafields'] else ''
+                            product.metafields.frame_color = str(json_d['metafields']['frame_color']).strip().title() if 'frame_color' in json_d['metafields'] else ''
+                            product.metafields.size_bridge_template = str(json_d['metafields']['size-bridge-template']).strip() if 'size-bridge-template' in json_d['metafields'] else ''
+                            product.metafields.gtin1 = str(json_d['metafields']['gtin1']).strip() if 'gtin1' in json_d['metafields'] else ''
                         
                         variants = []
                         for json_variant in json_d['variants']:
                             variant = Variant()
-                            variant.id = str(json_variant['_id']).strip().replace('-', '/')
-                            variant.product_id = str(json_variant['product_id']).strip().replace('-', '/')
-                            variant.title = str(json_variant['title']).strip()
-                            variant.sku = str(json_variant['sku']).strip().upper().replace('-', '/')
-                            variant.inventory_quantity = int(json_variant['inventory_quantity'])
-                            variant.found_status = int(json_variant['found_status'])
-                            variant.wholesale_price = float(json_variant['wholesale_price'])
-                            variant.listing_price = float(json_variant['listing_price'])
-                            variant.barcode_or_gtin = str(json_variant['barcode_or_gtin']).strip()
-                            variant.size = str(json_variant['size']).strip()
+                            variant.id = str(json_variant['_id']).strip().replace('-', '/') if '_id' in json_variant else ''
+                            variant.product_id = str(json_variant['product_id']).strip().replace('-', '/') if 'product_id' in json_variant else ''
+                            variant.title = str(json_variant['title']).strip() if 'title' in json_variant else ''
+                            variant.sku = str(json_variant['sku']).strip().upper().replace('-', '/') if 'sku' in json_variant else ''
+                            variant.inventory_quantity = int(json_variant['inventory_quantity']) if 'inventory_quantity' in json_variant else 0
+                            variant.found_status = int(json_variant['found_status']) if 'found_status' in json_variant else 0
+                            variant.wholesale_price = float(json_variant['wholesale_price']) if 'wholesale_price' in json_variant else 0.0
+                            variant.listing_price = float(json_variant['listing_price']) if 'listing_price' in json_variant else 0.0
+                            variant.barcode_or_gtin = str(json_variant['barcode_or_gtin']).strip() if 'barcode_or_gtin' in json_variant else ''
+                            variant.size = str(json_variant['size']).strip() if 'size' in json_variant else ''
                             variants.append(variant)
                         product.variants = variants 
                         products.append(product)
@@ -156,26 +158,29 @@ class Keringeyewear_Mongodb:
             # for p_json in query_processor.get_products_by_brand(brand.name):
             for p_json in self.query_processor.get_all_product_details_by_brand_name(brand_name, product_type):
                 product = Product()
-                product.id = str(p_json['_id']).strip()
-                product.number = str(p_json['number']).strip()
-                product.name = str(p_json['name']).strip()
-                product.brand = str(p_json['brand']).strip()
-                product.frame_code = str(p_json['frame_code']).strip()
-                product.lens_code = str(p_json['lens_code']).strip()
-                product.type = str(p_json['type']).strip()
-                product.bridge = str(p_json['bridge']).strip()
-                product.template = str(p_json['template']).strip()
-                product.shopify_id = str(p_json['shopify_id']).strip()
-                product.metafields.for_who = str(p_json['metafields']['for_who']).strip()
-                product.metafields.lens_material = str(p_json['metafields']['lens_material']).strip()
-                product.metafields.lens_technology = str(p_json['metafields']['lens_technology']).strip()
-                product.metafields.lens_color = str(p_json['metafields']['lens_color']).strip()
-                product.metafields.frame_shape = str(p_json['metafields']['frame_shape']).strip()
-                product.metafields.frame_material = str(p_json['metafields']['frame_material']).strip()
-                product.metafields.frame_color = str(p_json['metafields']['frame_color']).strip()
-                product.metafields.size_bridge_template = str(p_json['metafields']['size-bridge-template']).strip()
-                product.metafields.gtin1 = str(p_json['metafields']['gtin1']).strip()
-                product.image = str(p_json['image']).strip() if product.image else ''
+                product.id = str(p_json['_id']).strip() if '_id' in p_json else ''
+                product.number = str(p_json['number']).strip() if 'number' in p_json else ''
+                product.name = str(p_json['name']).strip() if 'name' in p_json else ''
+                product.brand = str(p_json['brand']).strip() if 'brand' in p_json else ''
+                product.frame_code = str(p_json['frame_code']).strip() if 'frame_code' in p_json else ''
+                product.lens_code = str(p_json['lens_code']).strip() if 'lens_code' in p_json else ''
+                product.type = str(p_json['type']).strip() if 'type' in p_json else ''
+                product.bridge = str(p_json['bridge']).strip() if 'bridge' in p_json else ''
+                product.template = str(p_json['template']).strip() if 'template' in p_json else ''
+                product.shopify_id = str(p_json['shopify_id']).strip() if 'shopify_id' in p_json else ''
+                if 'metafields' in p_json:
+                    p_json_metafields = p_json['metafields']
+                    product.metafields.for_who = str(p_json_metafields['for_who']).strip() if 'for_who' in p_json_metafields else ''
+                    product.metafields.lens_material = str(p_json_metafields['lens_material']).strip() if 'lens_material' in p_json_metafields else ''
+                    product.metafields.lens_technology = str(p_json_metafields['lens_technology']).strip() if 'lens_technology' in p_json_metafields else ''
+                    product.metafields.lens_color = str(p_json_metafields['lens_color']).strip() if 'lens_color' in p_json_metafields else ''
+                    product.metafields.frame_shape = str(p_json_metafields['frame_shape']).strip() if 'frame_shape' in p_json_metafields else ''
+                    product.metafields.frame_material = str(p_json_metafields['frame_material']).strip() if 'frame_material' in p_json_metafields else ''
+                    product.metafields.frame_color = str(p_json_metafields['frame_color']).strip() if 'frame_color' in p_json_metafields else ''
+                    product.metafields.size_bridge_template = str(p_json_metafields['size-bridge-template']).strip() if 'size-bridge-template' in p_json_metafields else ''
+                    product.metafields.gtin1 = str(p_json_metafields['gtin1']).strip() if 'gtin1' in p_json_metafields else ''
+                product.image = str(p_json['image']).strip() if 'image' in p_json else ''
+                product.tags = p_json['tags'] if 'tags' in p_json else []
                 product.images_360 = p_json['images_360'] if p_json['images_360'] else []
 
                 variants: list[Variant] = []
@@ -219,6 +224,9 @@ class Keringeyewear_Mongodb:
 
             if scraped_product.image and scraped_product.image != matched_db_product.image:
                 update_values_dict['image'] = scraped_product.image
+
+            if scraped_product.tags and len(scraped_product.tags) != 0 and scraped_product.tags != matched_db_product.tags:
+                update_values_dict['tags'] = scraped_product.tags
 
             if scraped_product.images_360 and len(scraped_product.images_360) != 0 and scraped_product.images_360 != matched_db_product.images_360:
                 update_values_dict['images_360'] = scraped_product.images_360

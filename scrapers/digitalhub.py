@@ -523,6 +523,23 @@ class Digitalhub_Scraper:
                                     try: product.image = variant_json.get('images').get('PDPImage')
                                     except: pass
 
+                                    try: 
+                                        if 'bestseller' in variant_json.get('fields') and variant_json.get('fields').get('bestseller'):
+                                            product.tags.append('Best Seller')
+                                        if 'isClipon' in variant_json.get('fields') and variant_json.get('fields').get('isClipon'):
+                                            product.tags.append('Clip-on')
+                                        if 'isMustHave' in variant_json.get('fields') and variant_json.get('fields').get('isMustHave'):
+                                            product.tags.append('Must Have')
+                                        if 'isSeasonal' in variant_json.get('fields') and variant_json.get('fields').get('isSeasonal'):
+                                            product.tags.append('Seasonal')
+                                        if 'isPermanent' in variant_json.get('fields') and variant_json.get('fields').get('isPermanent'):
+                                            product.tags.append('Permanent')
+                                        if 'topcolor' in variant_json.get('fields') and variant_json.get('fields').get('topcolor'):
+                                            product.tags.append('Top color')
+                                        if 'RXCapability__c' in variant_json.get('fields') and variant_json.get('fields').get('RXCapability__c'):
+                                            product.tags.append('RXable')
+                                    except: pass
+
                                     try: product.images_360 = variant_json.get('images').get('Rotations')
                                     except: pass
 
