@@ -244,7 +244,7 @@ class myScrapingThreadController:
                 main_div = soup.select_one('div[class="badge-area"]')
                 for badges in main_div.select('p[class="best-feature"]'):
                     badge_text = str(badges.text).strip()
-                    if badge_text not in product.tags:
+                    if badge_text and badge_text not in product.tags:
                         product.tags.append(badge_text)
             except Exception as e: 
                     self.print_logs(f'Exception in product.tags: {e}')

@@ -524,19 +524,19 @@ class Digitalhub_Scraper:
                                     except: pass
 
                                     try: 
-                                        if 'bestseller' in variant_json.get('fields') and variant_json.get('fields').get('bestseller'):
+                                        if 'bestseller' in variant_json.get('fields') and variant_json.get('fields').get('bestseller') and 'Best Seller' not in product.tags:
                                             product.tags.append('Best Seller')
-                                        if 'isClipon' in variant_json.get('fields') and variant_json.get('fields').get('isClipon'):
+                                        if 'isClipon' in variant_json.get('fields') and variant_json.get('fields').get('isClipon') and 'Clip-on' not in product.tags:
                                             product.tags.append('Clip-on')
-                                        if 'isMustHave' in variant_json.get('fields') and variant_json.get('fields').get('isMustHave'):
+                                        if 'isMustHave' in variant_json.get('fields') and variant_json.get('fields').get('isMustHave') and 'Must Have' not in product.tags:
                                             product.tags.append('Must Have')
-                                        if 'isSeasonal' in variant_json.get('fields') and variant_json.get('fields').get('isSeasonal'):
+                                        if 'isSeasonal' in variant_json.get('fields') and variant_json.get('fields').get('isSeasonal') and 'Seasonal' not in product.tags:
                                             product.tags.append('Seasonal')
-                                        if 'isPermanent' in variant_json.get('fields') and variant_json.get('fields').get('isPermanent'):
+                                        if 'isPermanent' in variant_json.get('fields') and variant_json.get('fields').get('isPermanent') and 'Permanent' not in product.tags:
                                             product.tags.append('Permanent')
-                                        if 'topcolor' in variant_json.get('fields') and variant_json.get('fields').get('topcolor'):
+                                        if 'topcolor' in variant_json.get('fields') and variant_json.get('fields').get('topcolor') and 'Top color' not in product.tags:
                                             product.tags.append('Top color')
-                                        if 'RXCapability__c' in variant_json.get('fields') and variant_json.get('fields').get('RXCapability__c'):
+                                        if 'RXCapability__c' in variant_json.get('fields') and variant_json.get('fields').get('RXCapability__c') and 'RXable' not in product.tags:
                                             product.tags.append('RXable')
                                     except: pass
 
@@ -768,6 +768,7 @@ class Digitalhub_Scraper:
                         'gtin1': str(product.metafields.gtin1).strip()
                     },
                     'image': str(product.image).strip(),
+                    'tags': product.tags,
                     'images_360': product.images_360,
                     'variants': json_varinats
                 }

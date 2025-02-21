@@ -114,6 +114,7 @@ class Safilo_Mongodb:
                         product.template = str(json_d['template']).strip()
                         product.image = str(json_d['image']).strip()
                         product.url = str(json_d['url']).strip()
+                        product.tags = json_d['tags'] if 'tags' in json_d else []
                         product.images_360 = json_d['images_360']
 
                         product.metafields.for_who = str(json_d['metafields']['for_who']).strip().title()
@@ -178,6 +179,7 @@ class Safilo_Mongodb:
                 product.metafields.size_bridge_template = str(p_json['metafields']['size-bridge-template']).strip()
                 product.metafields.gtin1 = str(p_json['metafields']['gtin1']).strip()
                 product.image = str(p_json['image']).strip() if product.image else ''
+                product.tags = p_json['tags'] if 'tags' in p_json else []
                 product.images_360 = p_json['images_360'] if p_json['images_360'] else []
 
                 variants: list[Variant] = []
@@ -224,6 +226,9 @@ class Safilo_Mongodb:
 
             if scraped_product.url and scraped_product.url != matched_db_product.url:
                 update_values_dict['url'] = scraped_product.url
+
+            if scraped_product.tags and len(scraped_product.tags) != 0 and scraped_product.tags != matched_db_product.tags:
+                update_values_dict['tags'] = scraped_product.tags
 
             if scraped_product.images_360 and len(scraped_product.images_360) != 0 and scraped_product.images_360 != matched_db_product.images_360:
                 update_values_dict['images_360'] = scraped_product.images_360
@@ -321,6 +326,7 @@ class Safilo_Mongodb:
                     'gtin1': product.metafields.gtin1
                 },
                 'image': product.image,
+                'tags': product.tags,
                 'images_360': product.images_360
             }
 

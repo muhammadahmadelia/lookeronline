@@ -490,6 +490,18 @@ class Safilo_Scraper:
                         except: pass
                         # try: product.image = str(value['DisplayUrl']).strip().replace('{0}', '00').replace('{1}', 'medium')
                         # except: pass
+                        try:
+                            # if 'B2B_CoreCollection__c' in value and value['B2B_CoreCollection__c'] and 'New' not in product.tags: product.tags.append('New')
+                            if 'B2B_Polarized__c' in value and value['B2B_Polarized__c'] and 'Polarized' not in product.tags: product.tags.append('Polarized')
+                            if 'B2B_Adv__c' in value and value['B2B_Adv__c'] and 'ADV' not in product.tags: product.tags.append('ADV')
+                            if 'B2B_New__c' in value and value['B2B_New__c'] and 'New' not in product.tags: product.tags.append('New')
+                            
+                            if 'B2B_ProductSalesArea__r' in value:
+                                for B2B_ProductSalesArea__r in value.get('B2B_ProductSalesArea__r'):
+                                    if 'SRV_BestSeller__c' in B2B_ProductSalesArea__r and B2B_ProductSalesArea__r.get('SRV_BestSeller__c'):
+                                        if 'Best Seller' not in product.tags: product.tags.append('Best Seller')
+                            
+                        except: pass
                         self.get_product_images(product)
 
                         # print(frame_code, lens_code, bridge, template, image_url)
@@ -1353,6 +1365,7 @@ class Safilo_Scraper:
                         'gtin1': str(product.metafields.gtin1).strip()
                     },
                     'image': str(product.image).strip(),
+                    'tags': product.tags,
                     'images_360': product.images_360,
                     'variants': json_varinats
                 }

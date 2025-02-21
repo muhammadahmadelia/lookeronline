@@ -326,6 +326,7 @@ class Keringeyewear_Mongodb:
                     'gtin1': product.metafields.gtin1
                 },
                 'image': product.image,
+                'tags': product.tags,
                 'images_360': product.images_360
             }
 
